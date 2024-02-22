@@ -50,7 +50,7 @@ export default function Login({navigation}) {
           title='Iniciar Sesión'
           onPress={() => {
             saveUsername();
-            navigation.navigate('Lista_Fallas');
+            navigation.navigate('MainTabNavigator', { screen: 'Lista_Fallas' });
           }}
         />
       </View>
