@@ -1,4 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
+
 import {Button, StyleSheet, Text, View, TextInput, } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect } from 'react';
@@ -50,12 +50,12 @@ export default function Login({navigation}) {
           title='Iniciar Sesión'
           onPress={() => {
             saveUsername();
-            navigation.navigate('MainTabNavigator', { screen: 'Lista_Fallas' });
+            navigation.navigate('MainTabNavigator', { screen: 'Inicio' });
           }}
         />
       </View>
 
-      <StatusBar style="auto" />
+      
     </View>
   );
 }

@@ -43,7 +43,7 @@ const Lista_Fallas = () => {
             )
     }
     const combinedData = [...Fallas, ...FallasInfantil];
-
+    //Falta buscador y filtro y Qr
     const FallasItem = ({ item, index }) => {
         const estilo = index % 2 === 0 ? styles.par : styles.impar;
         return (
