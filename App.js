@@ -4,28 +4,29 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import 'react-native-gesture-handler';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View,SafeAreaView,StatusBar } from 'react-native';
 import Acceder from './Ejemplos/Acceder';
 import Lista_Fallas from './Ejemplos/Lista_Fallas';
 import Inicio from './Ejemplos/Inicio';
 import Login from './Ejemplos/Login';
 import Visitado from './Ejemplos/Visitado';
 import Usuario from './Ejemplos/Usuario';
-
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 export default function App() {
   return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="default" />
     <NavigationContainer>
-      <StatusBar hidden = {true}/>  
-      {/* Esta oculta la barra, lo que hace que aparezca una franja negra y no se sobreponga la barra sobre al aplicacion, mejora que apareza la hora */}
+      
       <Stack.Navigator>
         <Stack.Screen name="Acceder" component={Acceder} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="MainTabNavigator" component={MainTabNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
+    </SafeAreaView>
   );
 }
 
@@ -90,5 +91,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  safeArea: {
+    flex: 1,
+    paddingTop: ExpoStatusBar.currentHeight,
+
   },
 });
