@@ -47,7 +47,6 @@ const styles = StyleSheet.create({
     },
     button:{
         backgroundColor: '#ff8c00',
-        
         shadowColor: 'rgba(0, 0, 0, 0.5)',
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.7,
@@ -57,7 +56,8 @@ const styles = StyleSheet.create({
         color: 'white',
         textAlign: 'center',
         padding: 10,
-        fontSize: 17
+        fontSize: 17,
+        fontWeight: 'bold',
 
     }
 });

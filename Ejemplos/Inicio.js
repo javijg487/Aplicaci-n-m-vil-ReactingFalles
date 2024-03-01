@@ -1,12 +1,53 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState} from 'react';
 import { StyleSheet, Alert} from 'react-native';
-import MapView, {Marker } from 'react-native-maps';
+import {Marker } from 'react-native-maps';
+import MapView from "react-native-map-clustering";
 import * as Location from 'expo-location';
 
 
 const Inicio = () => {
 
     const mapView = React.useRef(null);
+    const [Fallas, setFallas] = useState([]);
+    const [FallasInfantil, setFallasInfantil] = useState([]);
+    useEffect(() => {
+        loadData();
+        loadData_Infantiles();
+    }, []);
+
+    const loadData = () => {
+        fetch('https://valencia.opendatasoft.com/api/explore/v2.1/catalog/datasets/falles-fallas/exports/json?lang=es&timezone=Europe%2FBerlin')
+            .then((response) => response.json())
+            .then((responseJson) => {
+
+                const fallasConTipo = responseJson.map(falla => ({
+                    ...falla,
+                    tipo: "Mayor" 
+                }));
+
+                console.log("Falla Mayor"+ responseJson);
+                
+                setFallas(fallasConTipo);
+            }
+            )
+    }
+    
+
+    const loadData_Infantiles = () => {
+        fetch(('https://valencia.opendatasoft.com/api/explore/v2.1/catalog/datasets/falles-infantils-fallas-infantiles/exports/json?lang=es&timezone=Europe%2FBerlin'))
+            .then((response) => response.json())
+            .then((responseJson) => {
+                const fallasConTipo = responseJson.map(falla => ({
+                    ...falla,
+                    tipo: "Infantil" 
+                }));
+
+                console.log("Falla Infantil"+ responseJson);
+                setFallasInfantil(fallasConTipo);
+            }
+            )
+    }
+    const combinedData = [...Fallas, ...FallasInfantil];
     useEffect(() => {
         const getCurrentLocation = async () => {
             let location = await Location.getCurrentPositionAsync({});
@@ -46,17 +87,20 @@ const Inicio = () => {
                 longitudeDelta: 1.01,
             }}
 
-        >
+        >   
+        {combinedData.map((falla, index) => (
             <Marker
-                coordinate={
-                    {
-                        latitude: 39.513058,
-                        longitude: -0.424272
-                    }}
-                title={"Falla"}
-                pinColor='blue'
-                //image={require('../assets/portada.png')}
-            />
+                key={index}
+                coordinate={{
+                    latitude: falla.geo_point_2d.lat,
+                    longitude: falla.geo_point_2d.lon
+                }}
+                title={falla.nombre}
+                description={falla.tipo}
+                pinColor={falla.tipo === "Mayor" ? 'red' : 'green'}
+            /> 
+        ))}
+            
             {/*… Aquí los componentes personalizados …*/}
         </MapView>
     );
