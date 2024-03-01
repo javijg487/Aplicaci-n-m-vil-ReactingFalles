@@ -1,5 +1,5 @@
 
-import {Button, StyleSheet, Text, View, TextInput, } from 'react-native';
+import {TouchableOpacity, StyleSheet, Text, View, TextInput, } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect } from 'react';
 
@@ -45,14 +45,15 @@ export default function Login({navigation}) {
         <TextInput style={styles.input} onChangeText={text => setmyUsername(text)}
         value={myUsername}></TextInput>
       </View >
-      <View style={styles.button}>
-        <Button
-          title='Iniciar Sesión'
+      <View>
+        <TouchableOpacity style={styles.button}
           onPress={() => {
             saveUsername();
             navigation.navigate('MainTabNavigator', { screen: 'Inicio' });
           }}
-        />
+        >
+        <Text style={styles.buttonText}>Iniciar Sesión</Text>
+        </TouchableOpacity>
       </View>
 
       
@@ -75,7 +76,12 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   button: {
-    alignSelf: 'stretch'
+    alignSelf: 'stretch',
+    backgroundColor: 'black',
+    shadowColor: 'rgba(0, 0, 0, 0.5)',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.7,
+    borderRadius: 30,
 
   },
   input: {
@@ -97,4 +103,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignSelf: 'stretch'
   },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+    padding: 10,
+    fontSize: 17
+
+}
 });

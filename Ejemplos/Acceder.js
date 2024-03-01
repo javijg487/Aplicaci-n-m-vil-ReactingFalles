@@ -1,21 +1,23 @@
 import React from 'react';
-import { View,Text, Button, StyleSheet, ImageBackground } from 'react-native';
+import { View,Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 
 const Acceder = ({ navigation }) => {
     return (
         <View style={styles.container}>
 
-            <ImageBackground
-                source={{ uri: 'https://pbs.twimg.com/media/FrXl1IjWIAAY7XD.jpg:large' }}
-                style={styles.image_style}
+                <ImageBackground
+                    source={{ uri: 'https://pbs.twimg.com/media/FrXl1IjWIAAY7XD.jpg:large' }}
+                    style={styles.image_style}
 
-            >
-                <Text style={styles.title}>ReactingFalles</Text>
-                <View style={styles.button}>
-                    <Button color='#ff8c00' title="Acceder" onPress={() => navigation.navigate('Login')} />
-                </View>
-            </ImageBackground>
-        </View>
+                >
+                    <Text style={styles.title}>ReactingFalles</Text>
+                    <View style={styles.button_collocation}>
+                        <TouchableOpacity style={styles.button}  onPress={() => navigation.navigate('Login')} >
+                            <Text style={styles.buttonText}>Acceder</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ImageBackground>
+            </View>
     );
 };
 
@@ -37,15 +39,25 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
         justifyContent: 'center',
     },
-    button: {
+    button_collocation: {
         alignSelf: 'center',
         width: '50%',
         marginTop: 400,
 
-        backgroundColor: '#ff9401',
+    },
+    button:{
+        backgroundColor: '#ff8c00',
+        
         shadowColor: 'rgba(0, 0, 0, 0.5)',
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.7,
         borderRadius: 30,
     },
+    buttonText: {
+        color: 'white',
+        textAlign: 'center',
+        padding: 10,
+        fontSize: 17
+
+    }
 });
