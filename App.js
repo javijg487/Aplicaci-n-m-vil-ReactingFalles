@@ -12,6 +12,8 @@ import Inicio from './Ejemplos/Inicio';
 import Login from './Ejemplos/Login';
 import Visitado from './Ejemplos/Visitado';
 import Usuario from './Ejemplos/Usuario';
+import Datos from './Ejemplos/Datos';
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 export default function App() {
