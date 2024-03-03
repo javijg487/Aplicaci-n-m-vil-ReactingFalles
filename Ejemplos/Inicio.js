@@ -21,6 +21,7 @@ const Inicio = () => {
                 longitudeDelta: 0.01
             };
             // setRegion con animación
+            
             mapView.current.animateToRegion(region, 2000);
         }
 
