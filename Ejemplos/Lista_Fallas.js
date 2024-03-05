@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import {StyleSheet, FlatList, Text, View} from 'react-native';
+import {StyleSheet, FlatList, Text, View, TouchableOpacity} from 'react-native';
 import Datos from './Datos';
 
-const Lista_Fallas = () => {
+const Lista_Fallas = ({ navigation }) => {
     const combinedData = Datos();
     //Falta buscador y filtro y Qr
     const FallasItem = ({ item, index }) => {
@@ -22,6 +22,11 @@ const Lista_Fallas = () => {
 
     return (
         <View >
+            
+            <TouchableOpacity 
+            onPress={() => navigation.navigate('Camara')} >
+                <Text>Camara</Text>
+            </TouchableOpacity>
             <FlatList
                 data={combinedData}
                 renderItem={FallasItem}

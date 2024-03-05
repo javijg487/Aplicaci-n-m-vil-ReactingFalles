@@ -12,6 +12,7 @@ import Inicio from './Ejemplos/Inicio';
 import Login from './Ejemplos/Login';
 import Visitado from './Ejemplos/Visitado';
 import Usuario from './Ejemplos/Usuario';
+import Camara from './Ejemplos/Camara';
 import Datos from './Ejemplos/Datos';
 
 const Stack = createStackNavigator();
@@ -26,6 +27,7 @@ export default function App() {
         <Stack.Screen name="Acceder" component={Acceder} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="MainTabNavigator" component={MainTabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen name="Camara" component={Camara} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
     </SafeAreaView>
@@ -33,7 +35,7 @@ export default function App() {
 }
 
 const MainTabNavigator = () => (
-  <Tab.Navigator  tabBarOptions={{
+  <Tab.Navigator  screenOptions={{
     activeTintColor: '#FF8C00', 
     inactiveTintColor: 'gray', 
   }}>
