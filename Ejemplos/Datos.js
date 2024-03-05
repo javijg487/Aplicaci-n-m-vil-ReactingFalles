@@ -5,10 +5,12 @@ export const DatosContext = createContext();
 export const DatosProvider = ({children}) => {    
     const [Fallas, setFallas] = useState([]);
     const [FallasInfantil, setFallasInfantil] = useState([]);
-    
+    const [combinedData, setCombinedData] = useState([...Fallas, ...FallasInfantil]); 
+
     useEffect(() => {
         loadData();
         loadData_Infantiles();
+        setCombinedData([...Fallas, ...FallasInfantil]);
     }, []);
 
     const loadData = () => {
@@ -17,7 +19,8 @@ export const DatosProvider = ({children}) => {
             .then((responseJson) => {
                 const fallasConTipo = responseJson.map(falla => ({
                     ...falla,
-                    tipo: "Mayor" 
+                    tipo: "Mayor" ,
+                    visitado: false
                 }));
 
                 console.log("Falla Mayor" + responseJson);
@@ -33,7 +36,8 @@ export const DatosProvider = ({children}) => {
             .then((responseJson) => {
                 const fallasConTipo = responseJson.map(falla => ({
                     ...falla,
-                    tipo: "Infantil" 
+                    tipo: "Infantil",
+                    visitado: false
                 }));
 
                 console.log("Falla Infantil" + responseJson);
@@ -41,10 +45,23 @@ export const DatosProvider = ({children}) => {
             });
     }    
     
-    const combinedData = [...Fallas, ...FallasInfantil];
+    const toggleVisited = (falla) => {
+        console.log(falla);
+        setCombinedData(combinedData.map(item => {
+            if(item.objectid == falla.objectid){
+                falla.visitado ? falla.visitado = false : falla.visitado = true;
+                
+                return {...item}
+            }
+            
+            return item;
+        }));
+    }
+
+    
 
     return (
-        <DatosContext.Provider value={{combinedData, Fallas, FallasInfantil, loadData, loadData_Infantiles, setFallas, setFallasInfantil}}>
+        <DatosContext.Provider value={{combinedData, Fallas, FallasInfantil, toggleVisited, loadData, loadData_Infantiles, setFallas, setFallasInfantil}}>
             {children}
         </DatosContext.Provider>
         );
