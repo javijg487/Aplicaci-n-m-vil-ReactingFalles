@@ -1,13 +1,13 @@
-import React, { useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState} from 'react';
 import { StyleSheet, Alert} from 'react-native';
 import {Marker } from 'react-native-maps';
 import MapView from "react-native-map-clustering";
 import * as Location from 'expo-location';
-import Datos from './Datos';
+import {DatosContext} from './Datos';
 
 
 const Inicio = () => {
-    const combinedData = Datos();
+    const {combinedData} = useContext(DatosContext);
     const mapView = React.useRef(null);
 
     useEffect(() => {

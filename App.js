@@ -13,24 +13,26 @@ import Login from './Ejemplos/Login';
 import Visitado from './Ejemplos/Visitado';
 import Usuario from './Ejemplos/Usuario';
 import Camara from './Ejemplos/Camara';
-import Datos from './Ejemplos/Datos';
+import { DatosProvider } from './Ejemplos/Datos';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 export default function App() {
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="default" />
-    <NavigationContainer>
-      
-      <Stack.Navigator>
-        <Stack.Screen name="Acceder" component={Acceder} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-        <Stack.Screen name="MainTabNavigator" component={MainTabNavigator} options={{ headerShown: false }} />
-        <Stack.Screen name="Camara" component={Camara} options={{ headerShown: false }} />
+    <DatosProvider>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar barStyle="default" />
+        <NavigationContainer>
+          
+          <Stack.Navigator>
+            <Stack.Screen name="Acceder" component={Acceder} options={{ headerShown: false }} />
+            <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+            <Stack.Screen name="MainTabNavigator" component={MainTabNavigator} options={{ headerShown: false }} />
+            <Stack.Screen name="Camara" component={Camara} options={{ headerShown: false }} />
       </Stack.Navigator>
-    </NavigationContainer>
-    </SafeAreaView>
+        </NavigationContainer>
+      </SafeAreaView>
+    </DatosProvider>
   );
 }
 
