@@ -38,8 +38,8 @@ export default function App() {
 
 const MainTabNavigator = () => (
   <Tab.Navigator  screenOptions={{
-    activeTintColor: '#FF8C00', 
-    inactiveTintColor: 'gray', 
+    tabBarActiveTintColor: '#FF8C00', 
+    tabBarInactiveTintColor: 'gray', 
   }}>
     <Tab.Screen 
           name="Inicio" 
