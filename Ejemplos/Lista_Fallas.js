@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import {StyleSheet, FlatList, Text, View} from 'react-native';
-import Datos from './Datos';
+import {DatosContext} from './Datos';
 
 const Lista_Fallas = () => {
-    const combinedData = Datos();
+    const {combinedData} = useContext(DatosContext);
     //Falta buscador y filtro y Qr
     const FallasItem = ({ item, index }) => {
         const estilo = index % 2 === 0 ? styles.par : styles.impar;

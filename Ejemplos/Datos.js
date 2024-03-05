@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import {createContext, useState, useEffect } from 'react';
 
-const Datos = () => {    
+export const DatosContext = createContext();
+
+export const DatosProvider = ({children}) => {    
     const [Fallas, setFallas] = useState([]);
     const [FallasInfantil, setFallasInfantil] = useState([]);
     
@@ -37,11 +39,13 @@ const Datos = () => {
                 console.log("Falla Infantil" + responseJson);
                 setFallasInfantil(fallasConTipo);
             });
-    }
+    }    
     
     const combinedData = [...Fallas, ...FallasInfantil];
 
-    return combinedData;
-}
-
-export default Datos;
+    return (
+        <DatosContext.Provider value={{combinedData, Fallas, FallasInfantil, loadData, loadData_Infantiles, setFallas, setFallasInfantil}}>
+            {children}
+        </DatosContext.Provider>
+        );
+};
