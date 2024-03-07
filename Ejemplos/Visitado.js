@@ -1,67 +1,70 @@
-import { useContext, useState, useEffect } from 'react';
-import { StyleSheet, FlatList, Text, View, TouchableOpacity,Image } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { StyleSheet, FlatList, Text, View, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native';
 import { DatosContext } from './Datos';
-import { ScrollView } from 'react-native-gesture-handler';
-import { styleProps } from 'react-native-web/dist/cjs/modules/forwardedProps';
-
-const FallasItem = ({ item, index }) => {
-    const estilo = index % 2 === 0 ? styles.par : styles.impar;
-    const { toggleVisited } = useContext(DatosContext);
-    return (
-        <TouchableOpacity style={estilo} onPress={() => toggleVisited(item)}>
-            <Text numberOfLines={8} ellipsizeMode='tail'>
-                Nombre: {item.nombre}{'\n'}
-                Id: {item.objectid}{'\n'}
-                Sección: {item.seccion}{'\n'}
-                Tipo: {item.tipo}{'\n'}
-                Visitado: {!item.visitado ? 'Si' : 'No'}
-            </Text>
-
-        </TouchableOpacity>
-    );
-};
 
 const Visitado = ({ navigation }) => {
-    const { combinedData } = useContext(DatosContext);
-    //Falta buscador y filtro y Qr
+    const { combinedData, toggleVisited } = useContext(DatosContext);
+
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const filteredData = combinedData.filter(item => {
+        const propertiesToSearch = ["objectid", "id_falla", "nombre", "seccion", "fallera", "presidente", "artista", "lema", "tipo"];
+        return propertiesToSearch.some(property => {
+            const value = item[property];
+            return value && typeof value === 'string' && value.toLowerCase().includes(searchTerm.toLowerCase());
+        });
+    });
+
     return (
-        <ScrollView >
+        <ScrollView>
+
+            <View style={styles.searchContainer}>
+                <TextInput
+                    style={styles.searchInput}
+                    placeholder="Buscar..."
+                    onChangeText={text => setSearchTerm(text)}
+                    value={searchTerm}
+                />
+            </View>
+
+
             <Text style={styles.title}>Lista de Fallas Visitadas</Text>
             {
-                combinedData.map((item, index) => {
+                filteredData.map((item, index) => {
                     return (
-                        <View key={index} style={styles.itemContainer}>
-                            <Image
-                                source={{ uri: item.boceto }}
-                                style={styles.itemImage}
-                            />
+                        <TouchableOpacity onPress={() => toggleVisited(item)}>
+                            <View key={index} style={styles.itemContainer}>
 
-                            <View>
+                                <Image
+                                    source={{ uri: item.boceto }}
+                                    style={styles.itemImage}
+                                />
+                                <View>
                                     <Text style={styles.textItem}> {item.nombre}</Text>
-                                    <Text>Id: {item.objectid}</Text>
-                                    <Text>Sección: {item.seccion}</Text>
+                                    <Text>{item.seccion}</Text>
                                     <Text>Tipo: {item.tipo}</Text>
                                     <Text>Visitado: {!item.visitado ? 'Si' : 'No'}</Text>
+                                </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     )
                 })
             }
+
         </ScrollView>
     );
-
 }
 
 const styles = StyleSheet.create({
-    par: {
-        width: '100%',
-        backgroundColor: '#EFEFEF',
+    searchContainer: {
         padding: 10,
-
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
     },
-    impar: {
-        width: '100%',
-        backgroundColor: 'white',
+    searchInput: {
+        height: 40,
+        borderWidth: 1,
+        borderRadius: 5,
         padding: 10,
     },
     title: {
@@ -78,19 +81,20 @@ const styles = StyleSheet.create({
         backgroundColor: '#EFEFEF',
         borderRadius: 10,
     },
-    itemImage:{
-        width :50,
+    itemImage: {
+        width: 50,
         height: 75,
-        marginRight:15,
+        marginRight: 15,
         borderRadius: 8,
     },
-    textItem:{
+    textItem: {
         fontSize: 16,
         fontWeight: 'bold',
-       
+    },
+    touchable: {
+
+        flex: 1,
     }
 });
-
-
 
 export default Visitado;

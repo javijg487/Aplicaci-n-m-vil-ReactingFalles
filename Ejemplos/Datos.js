@@ -25,7 +25,16 @@ export const DatosProvider = ({children}) => {
                 const fallasConTipo = responseJson.map(falla => ({
                     ...falla,
                     tipo: "Mayor" ,
-                    visitado: false
+                    visitado: false,
+                    nombre: falla.nombre || "Nombre no disponible",
+                    seccion: falla.seccion|| "Sección no disponible",
+                    fallera: falla.fallera || "Fallera no disponible",
+                    presidente: falla.presidente || "Presidente no disponible",
+                    artista: falla.artista || "Artista no disponible",
+                    lema: falla.lema || "Lema no disponible",
+                    boceto: falla.boceto || "https://st2.depositphotos.com/1967477/6346/v/450/depositphotos_63462971-stock-illustration-sad-smiley-emoticon-cartoon.jpg"
+                    
+
                 }));
 
                 console.log("Falla Mayor" + responseJson);
@@ -42,7 +51,14 @@ export const DatosProvider = ({children}) => {
                 const fallasConTipo = responseJson.map(falla => ({
                     ...falla,
                     tipo: "Infantil",
-                    visitado: false
+                    visitado: false,
+                    nombre: falla.nombre || "Nombre no disponible",
+                    seccion: falla.seccion|| "Sección no disponible",
+                    fallera: falla.fallera || "Fallera no disponible",
+                    presidente: falla.presidente || "Presidente no disponible",
+                    artista: falla.artista || "Artista no disponible",
+                    lema: falla.lema || "Lema no disponible",
+                    boceto: falla.boceto || "https://st2.depositphotos.com/1967477/6346/v/450/depositphotos_63462971-stock-illustration-sad-smiley-emoticon-cartoon.jpg"
                 }));
 
                 console.log("Falla Infantil" + responseJson);
