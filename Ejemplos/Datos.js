@@ -5,13 +5,18 @@ export const DatosContext = createContext();
 export const DatosProvider = ({children}) => {    
     const [Fallas, setFallas] = useState([]);
     const [FallasInfantil, setFallasInfantil] = useState([]);
-    const [combinedData, setCombinedData] = useState([...Fallas, ...FallasInfantil]); 
+    const [combinedData, setCombinedData] = useState([]);  //Se inicializa con un array vacío
 
     useEffect(() => {
         loadData();
         loadData_Infantiles();
-        setCombinedData([...Fallas, ...FallasInfantil]);
     }, []);
+    
+    //Si Fallas o FallasInfantil cambian, se actualiza combinedData
+    useEffect(() => { 
+        setCombinedData([...Fallas, ...FallasInfantil]);
+    }, [Fallas, FallasInfantil]);
+
 
     const loadData = () => {
         fetch('https://valencia.opendatasoft.com/api/explore/v2.1/catalog/datasets/falles-fallas/exports/json?lang=es&timezone=Europe%2FBerlin')

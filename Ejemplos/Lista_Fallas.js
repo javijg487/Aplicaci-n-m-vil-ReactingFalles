@@ -32,7 +32,7 @@ const Lista_Fallas = ({ navigation }) => {
             </TouchableOpacity>
             <FlatList
                 data={combinedData}
-                renderItem={(item) => <FallasItem item = {item}/>}
+                renderItem={({item}) => <FallasItem item = {item}/>}
                 keyExtractor={item =>  item.objectid}
             />
         </View>
