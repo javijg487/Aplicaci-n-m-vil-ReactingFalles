@@ -1,5 +1,5 @@
 import React from 'react';
-import 'react-native-gesture-handler';
+
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, SafeAreaView, StatusBar } from 'react-native';
 import { DatosProvider } from './Ejemplos/Datos';

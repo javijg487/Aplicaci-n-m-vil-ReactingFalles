@@ -51,9 +51,9 @@ const Inicio = () => {
             }}
 
         >   
-        {combinedData.map((falla, index) => (
+        {combinedData.map((falla) => (
             <Marker
-                key={index}
+                key={falla.objectid}
                 coordinate={{
                     latitude: falla.geo_point_2d.lat,
                     longitude: falla.geo_point_2d.lon
