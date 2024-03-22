@@ -12,7 +12,6 @@ export const DatosProvider = ({ children }) => {
     const [combinedData, setCombinedData] = useState([]);  //Se inicializa con un array vacío
     const [Posicion, setPosicion] = useState(null);
     const [Distancia, setDistancia] = useState(null);
-    const [FallasVisitadas, setFallasVisitadas] = useState([]);
 
     useEffect(() => {
         loadData();
@@ -29,22 +28,9 @@ export const DatosProvider = ({ children }) => {
     useEffect(() => {
         if (Posicion) {
             calcularDistancia(Posicion); // Si tienes la posición, calcula la distancia
-            loadVisitedFallas();
         }
         requestLocationPermission();
     }, [Posicion, combinedData]);
-
-    const saveVisited = async (Falla_Visitada) => {
-        try {
-            await AsyncStorage.setItem(
-                `Falla_Visitada_${Falla_Visitada.objectid}`,
-                JSON.stringify(Falla_Visitada)
-
-            );
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
     const obtenerPosicion = async () => {
         let location = await Location.getCurrentPositionAsync({});
@@ -57,6 +43,9 @@ export const DatosProvider = ({ children }) => {
             return;
         }
     };
+
+    
+
 
 
     const loadData = () => {
@@ -110,26 +99,15 @@ export const DatosProvider = ({ children }) => {
                 ...updatedData[index],
                 visitado: !updatedData[index].visitado
             };
-            setCombinedData(updatedData);
-            saveVisited(updatedData[index]);
-            loadVisitedFallas();
+            setDistancia(updatedData); //setCombinedData(updatedData);
         }
-
     };
-    
 
-    const loadVisitedFallas = async () => {
-        const keys = await AsyncStorage.getAllKeys();
-        const visitedFallasKeys = keys.filter(key => key.startsWith('Falla_Visitada_'));
-        const visitedFallas = await AsyncStorage.multiGet(visitedFallasKeys);
-        setFallasVisitadas(visitedFallas.map(([key, value]) => JSON.parse(value)));
-        setDistancia(visitedFallas.map(([key, value]) => JSON.parse(value)));
-    };  
-
-    const FallaVisited = () => {
-        return FallasVisitadas.filter(falla => falla.visitado === true);
+    const FallasVisited = () => {
+        const visited = Distancia.filter(item => item.visitado === true);
+        return visited;
     }
-
+    
     const calcularDistancia = (location) => {
         if (location && location.coords) {
             const nuevasDistancias = combinedData.map(item => {
@@ -144,7 +122,7 @@ export const DatosProvider = ({ children }) => {
     }
 
     return (
-        <DatosContext.Provider value={{ combinedData, Fallas, FallasInfantil, toggleVisited, loadData, loadData_Infantiles, setFallas, setFallasInfantil, FallaVisited, Distancia,FallasVisitadas }}>
+        <DatosContext.Provider value={{ combinedData, Fallas, FallasInfantil, toggleVisited, loadData, loadData_Infantiles, setFallas, setFallasInfantil, Distancia, FallasVisited }}>
             {children}
         </DatosContext.Provider>
     );

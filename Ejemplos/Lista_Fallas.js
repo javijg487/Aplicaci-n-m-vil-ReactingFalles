@@ -5,7 +5,7 @@ import { DatosContext } from './Datos';
 import LottieView from 'lottie-react-native';
 
 const Lista_Fallas = ({ navigation }) => {
-    const { FallasVisitadas, toggleVisited, loadData, loadData_Infantiles } = useContext(DatosContext);
+    const { Distancia, toggleVisited, loadData, loadData_Infantiles } = useContext(DatosContext);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +27,7 @@ const Lista_Fallas = ({ navigation }) => {
         await loadData_Infantiles();
     };
 
-    const filteredData = FallasVisitadas.filter(item => {
+    const filteredData = Distancia.filter(item => {
         const propertiesToSearch = ["objectid", "id_falla", "nombre", "seccion", "fallera", "presidente", "artista", "lema", "tipo"];
         return propertiesToSearch.some(property => {
             const value = item[property];

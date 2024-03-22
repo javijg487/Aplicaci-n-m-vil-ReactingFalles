@@ -5,23 +5,22 @@ import { DatosContext } from './Datos';
 import LottieView from 'lottie-react-native';
 
 const Visitado = ({ navigation }) => {
-    const { FallaVisited, toggleVisited, loadData, loadData_Infantiles } = useContext(DatosContext);
+    const { FallasVisited, toggleVisited } = useContext(DatosContext);
 
     const [searchTerm, setSearchTerm] = useState('');
 
     const [isLoading, setIsLoading] = useState(true);
-    const fallasVisitadas = FallaVisited();
+
     useEffect(() => {
         const loadDataAsync = async () => {
-            await loadData();
-            await loadData_Infantiles();
+            await FallasVisited();
             setIsLoading(false);
         };
 
         loadDataAsync();
     }, []);
-
-    const filteredData = fallasVisitadas.filter(item => {
+    const Fallas_Visitadas = FallasVisited();
+    const filteredData = Fallas_Visitadas.filter(item => {
         const propertiesToSearch = ["objectid", "id_falla", "nombre", "seccion", "fallera", "presidente", "artista", "lema", "tipo"];
         return propertiesToSearch.some(property => {
             const value = item[property];
@@ -31,7 +30,7 @@ const Visitado = ({ navigation }) => {
     if (isLoading) {
 
         return (
-            <View style={ styles.loadingContainer}>
+            <View style={styles.loadingContainer}>
                 <LottieView style={{
                     width: 100,
                     height: 100,
@@ -45,7 +44,7 @@ const Visitado = ({ navigation }) => {
         <View style={styles.container}>
             <Text style={styles.title}>Lista de Fallas Visitadas</Text>
             <View style={styles.searchContainer}>
-                
+
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Buscar..."
@@ -110,7 +109,7 @@ const styles = StyleSheet.create({
     },
     searchContainer: {
         flexDirection: 'row',
-        alignItems: 'center', 
+        alignItems: 'center',
         padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
