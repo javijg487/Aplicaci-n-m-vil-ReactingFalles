@@ -18,7 +18,7 @@ export const DatosProvider = ({ children }) => {
         loadData();
         loadData_Infantiles();
         obtenerPosicion();
-        loadVisitedFallas();
+        
     }, []);
 
     //Si Fallas o FallasInfantil cambian, se actualiza combinedData
@@ -29,6 +29,7 @@ export const DatosProvider = ({ children }) => {
     useEffect(() => {
         if (Posicion) {
             calcularDistancia(Posicion); // Si tienes la posición, calcula la distancia
+            loadVisitedFallas();
         }
         requestLocationPermission();
     }, [Posicion, combinedData]);
@@ -115,12 +116,14 @@ export const DatosProvider = ({ children }) => {
         }
 
     };
+    
 
     const loadVisitedFallas = async () => {
         const keys = await AsyncStorage.getAllKeys();
         const visitedFallasKeys = keys.filter(key => key.startsWith('Falla_Visitada_'));
         const visitedFallas = await AsyncStorage.multiGet(visitedFallasKeys);
         setFallasVisitadas(visitedFallas.map(([key, value]) => JSON.parse(value)));
+        setDistancia(visitedFallas.map(([key, value]) => JSON.parse(value)));
     };  
 
     const FallaVisited = () => {
@@ -141,7 +144,7 @@ export const DatosProvider = ({ children }) => {
     }
 
     return (
-        <DatosContext.Provider value={{ combinedData, Fallas, FallasInfantil, toggleVisited, loadData, loadData_Infantiles, setFallas, setFallasInfantil, FallaVisited, Distancia }}>
+        <DatosContext.Provider value={{ combinedData, Fallas, FallasInfantil, toggleVisited, loadData, loadData_Infantiles, setFallas, setFallasInfantil, FallaVisited, Distancia,FallasVisitadas }}>
             {children}
         </DatosContext.Provider>
     );
