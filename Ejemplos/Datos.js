@@ -12,12 +12,13 @@ export const DatosProvider = ({ children }) => {
     const [combinedData, setCombinedData] = useState([]);  //Se inicializa con un array vacío
     const [Posicion, setPosicion] = useState(null);
     const [Distancia, setDistancia] = useState(null);
+    const [FallasVisitadas, setFallasVisitadas] = useState([]);
 
     useEffect(() => {
         loadData();
         loadData_Infantiles();
         obtenerPosicion();
-        
+
     }, []);
 
     //Si Fallas o FallasInfantil cambian, se actualiza combinedData
@@ -28,6 +29,7 @@ export const DatosProvider = ({ children }) => {
     useEffect(() => {
         if (Posicion) {
             calcularDistancia(Posicion); // Si tienes la posición, calcula la distancia
+            loadVisitedFallas();
         }
         requestLocationPermission();
     }, [Posicion, combinedData]);
@@ -44,7 +46,24 @@ export const DatosProvider = ({ children }) => {
         }
     };
 
-    
+    const saveVisited = async (objectid) => {
+        try {
+            const dataToStore = {
+                objectid: objectid,
+                visitado: true
+            };
+            console.log('objectid:', objectid);
+            console.log('dataToStore:', dataToStore);
+
+            await AsyncStorage.setItem(
+                `Fallas_Visitadas_${objectid}`,
+                JSON.stringify(dataToStore)
+
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
 
 
@@ -55,7 +74,7 @@ export const DatosProvider = ({ children }) => {
                 const fallasConTipo = responseJson.map(falla => ({
                     ...falla,
                     tipo: "Mayor",
-                   
+
                     nombre: falla.nombre || "Nombre no disponible",
                     seccion: falla.seccion || "Sección no disponible",
                     fallera: falla.fallera || "Fallera no disponible",
@@ -92,22 +111,54 @@ export const DatosProvider = ({ children }) => {
     }
 
     const toggleVisited = (falla) => {
-        const index = Distancia.findIndex(item => item.objectid === falla.objectid);
+        const index = Distancia.findIndex(item => item.objectid === falla.objectid); //Sino encuentra el objeto, devuelve -1
         if (index !== -1) {
             const updatedData = [...Distancia];
             updatedData[index] = {
                 ...updatedData[index],
                 visitado: !updatedData[index].visitado
             };
+            if (updatedData[index].visitado === true) {
+                saveVisited(falla.objectid);
+            } else if (updatedData[index].visitado === false) {
+                AsyncStorage.removeItem(`Fallas_Visitadas_${falla.objectid}`);
+            }
             setDistancia(updatedData); //setCombinedData(updatedData);
+            loadVisitedFallas();
         }
     };
+
+    const loadVisitedFallas = async () => {
+        try {
+            const keys = await AsyncStorage.getAllKeys();
+            const visitedFallasKeys = keys.filter(key => key.startsWith('Fallas_Visitadas_'));
+            const parsedData = await Promise.all(visitedFallasKeys.map(async key => {
+                const value = await AsyncStorage.getItem(key);
+                console.log('value:', value);
+                return JSON.parse(value);
+            }));
+
+            const updatedVisitado = Distancia.map(item => {
+                const index = parsedData.findIndex(parsedItem => parsedItem.objectid === item.objectid);
+                if (index !== -1) {
+                    return { ...item, visitado: true };
+                }
+                return item;
+            });
+
+            setDistancia(updatedVisitado);
+            setFallasVisitadas(updatedVisitado);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
 
     const FallasVisited = () => {
         const visited = Distancia.filter(item => item.visitado === true);
         return visited;
     }
-    
+
     const calcularDistancia = (location) => {
         if (location && location.coords) {
             const nuevasDistancias = combinedData.map(item => {
@@ -122,8 +173,9 @@ export const DatosProvider = ({ children }) => {
     }
 
     return (
-        <DatosContext.Provider value={{ combinedData, Fallas, FallasInfantil, toggleVisited, loadData, loadData_Infantiles, setFallas, setFallasInfantil, Distancia, FallasVisited }}>
+        <DatosContext.Provider value={{ combinedData, Fallas, FallasInfantil, toggleVisited, loadData, loadData_Infantiles, setFallas, setFallasInfantil, Distancia, FallasVisited, FallasVisitadas }}>
             {children}
         </DatosContext.Provider>
     );
+
 };
