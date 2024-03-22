@@ -1,15 +1,15 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, TextInput, ScrollView, FlatList, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { DatosContext } from './Datos';
 import LottieView from 'lottie-react-native';
 
 const Lista_Fallas = ({ navigation }) => {
-    const { Distancia, toggleVisited, loadData, loadData_Infantiles } = useContext(DatosContext);
+    const { FallasVisitadas, toggleVisited, loadData, loadData_Infantiles } = useContext(DatosContext);
 
     const [searchTerm, setSearchTerm] = useState('');
-
     const [isLoading, setIsLoading] = useState(true);
+    const [page, setPage] = useState(1);
 
     useEffect(() => {
         const loadDataAsync = async () => {
@@ -21,17 +21,25 @@ const Lista_Fallas = ({ navigation }) => {
         loadDataAsync();
     }, []);
 
-    const filteredData = Distancia.filter(item => {
+    const loadMoreData = async () => {
+        setPage(page + 1);
+        await loadData();
+        await loadData_Infantiles();
+    };
+
+    const filteredData = FallasVisitadas.filter(item => {
         const propertiesToSearch = ["objectid", "id_falla", "nombre", "seccion", "fallera", "presidente", "artista", "lema", "tipo"];
         return propertiesToSearch.some(property => {
             const value = item[property];
             return value && typeof value === 'string' && value.toLowerCase().includes(searchTerm.toLowerCase());
         });
     });
-    if (isLoading) {
+    
+    const sortedData = filteredData.sort((a, b) => a.distancia - b.distancia);
 
+    if (isLoading) {
         return (
-            <View style={ styles.loadingContainer}>
+            <View style={styles.loadingContainer}>
                 <LottieView style={{
                     width: 100,
                     height: 100,
@@ -41,67 +49,48 @@ const Lista_Fallas = ({ navigation }) => {
         );
     }
 
-    const distanceData = filteredData.sort((a, b) => a.distancia - b.distancia);
+    const renderItem = ({ item }) => (
+        <TouchableOpacity onPress={() => toggleVisited(item)}>
+            <View style={styles.itemContainer}>
+                <Image style={styles.itemImage} source={{ uri: item.boceto }} />
+                <View>
+                    <Text style={styles.textItem}>{item.nombre}</Text>
+                    <Text>{item.tipo} - {item.seccion}</Text>
+                    <Text>Visitado: {item.visitado ? 'Si' : 'No'}</Text>
+                    <Text>Distancia: {item.distancia} Km</Text>
+                </View>
+            </View>
+        </TouchableOpacity>
+    );
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Lista de Fallas</Text>
             <View style={styles.searchContainer}>
-                
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Buscar..."
                     onChangeText={text => setSearchTerm(text)}
-
                     value={searchTerm}
                 />
-                <TouchableOpacity style={styles.button}
-                    onPress={() => {
-                        navigation.navigate('Camara', { screen: 'Camara' });
-                    }}
-                >
+                <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate('Camara', { screen: 'Camara' }); }}>
                     <Ionicons name="qr-code-outline" size={30} color="black" />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button}
-                    onPress={() => {
-                        navigation.navigate('Filtros', { screen: 'Filtros' });
-                    }}
-                >
+                <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate('Filtros', { screen: 'Filtros' }); }}>
                     <Ionicons name="funnel" size={30} color="black" />
                 </TouchableOpacity>
             </View>
-
-            <ScrollView>
-
-
-                {
-                    distanceData.map((item) => {
-                        return (
-                            <TouchableOpacity key={item.objectid} onPress={() => toggleVisited(item)}>
-                                <View style={styles.itemContainer}>
-
-                                    <Image
-                                        style={styles.itemImage}
-                                        source={{ uri: item.boceto }}
-
-                                    />
-                                    <View>
-                                        <Text style={styles.textItem}>{item.nombre}</Text>
-                                        <Text>{item.tipo} - {item.seccion}</Text>
-                                        <Text>Visitado: {item.visitado ? 'Si' : 'No'}</Text>
-                                        <Text>Distancia: {item.distancia} Km</Text>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        )
-                    })
-                }
-
-
-            </ScrollView>
+            <FlatList
+                data={sortedData}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.objectid.toString()}
+                onEndReached={loadMoreData} // Detectar cuando el usuario llega al final de la lista
+                onEndReachedThreshold={0.1} // Porcentaje de la longitud de la lista en el que se llama a onEndReached
+                ListFooterComponent={isLoading && <ActivityIndicator />} // Indicador de carga al final de la lista
+            />
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -109,7 +98,7 @@ const styles = StyleSheet.create({
     },
     searchContainer: {
         flexDirection: 'row',
-        alignItems: 'center', 
+        alignItems: 'center',
         padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
@@ -147,7 +136,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     touchable: {
-
         flex: 1,
     },
     loadingContainer: {
