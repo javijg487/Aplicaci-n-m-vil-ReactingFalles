@@ -1,11 +1,13 @@
 
-import {TouchableOpacity, StyleSheet, Text, View, TextInput, } from 'react-native';
+import { TouchableOpacity, StyleSheet, Text, View, TextInput, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect } from 'react';
+//import { Divider } from '@rneui/themed';
+//<Divider inset={true} insetType="middle" ></Divider>
 
 
 
-export default function Login({navigation}) {
+export default function Login({ navigation }) {
 
   const [myUsername, setmyUsername] = useState('');
 
@@ -37,77 +39,108 @@ export default function Login({navigation}) {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>¡Bienvenido!
-      </Text>
-      <View style={styles.inputContainer}>
-        <Text style={styles.normalText}>Usuario</Text>
-        <TextInput style={styles.input} onChangeText={text => setmyUsername(text)}
-        value={myUsername}></TextInput>
-      </View >
-      <View>
-        <TouchableOpacity style={styles.button}
-          onPress={() => {
-            saveUsername();
-            navigation.navigate('MainTabNavigator', { screen: 'Inicio' });
-          }}
-        >
-        <Text style={styles.buttonText}>Iniciar Sesión</Text>
-        </TouchableOpacity>
+    <View style={styles.background}>
+      <View style={styles.container}>
+        <Image
+          source={require('../assets/login.jpg')}
+          style={styles.image_style}
+        />
+        <Text style={styles.reactingText} >Reacting Falles</Text>
       </View>
 
-      
+      <View style={[styles.loginBox, styles.shadowBox]}>
+
+        <Text style={styles.titleText}>Iniciar sesión</Text>
+
+        <View style={styles.credentialsLogin}>
+          <Text style={styles.normalText}>Usuario</Text>
+          <TextInput style={styles.input} onChangeText={text => setmyUsername(text)} value={myUsername} />
+
+          <TouchableOpacity style={styles.loginButton}
+          onPress={() => {
+            saveUsername();
+            navigation.navigate('MainTabNavigator', {screen: 'Inicio'})
+          }}>
+            <Text style={[styles.normalText, { textAlign: 'center', fontSize: 18, fontWeight: 'bold', color: 'white' }]}>Iniciar sesión</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
+
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
     backgroundColor: '#FF8C00',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 40,
-    paddingVertical: 10
-  },
-  title: {
-    fontWeight: 'bold',
-    fontSize: 30,
-    paddingBottom: 20,
-  },
-  button: {
-    alignSelf: 'stretch',
-    backgroundColor: 'black',
-    shadowColor: 'rgba(0, 0, 0, 0.5)',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.7,
-    borderRadius: 30,
 
   },
-  input: {
-    height: 40,
-    marginStart: 10,
-    padding: 10,
-    backgroundColor: 'white',
-    fontSize: 16,
+  container: {
     flex: 1,
   },
-  normalText: {
-    marginStart: 10,
-    fontSize: 16,
-    minWidth: 85
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-    alignSelf: 'stretch'
-  },
-  buttonText: {
-    color: 'white',
+  reactingText: {
+    fontSize: 40,
+    marginTop: -250,
     textAlign: 'center',
-    padding: 10,
-    fontSize: 17
+    fontWeight: 'bold',
+    color: '#FFFFFF'
+  },
+  image_style: {
+    height: '90%',
+    width: '100%',
+    opacity: 0.9,
+    borderBottomLeftRadius: 150,
+    borderBottomRightRadius: 150
+  },
+  loginBox: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    marginTop: -150,
+    height: '80%',
+    width: '80%',
+    alignSelf: 'center',
+    borderTopStartRadius: 40,
+    borderTopEndRadius: 40,
 
-}
+  },
+  shadowBox: {
+    shadowColor: '#1E1E1E',
+    shadowOffset: { width: -2, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  input: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    backgroundColor: '#1E1E1E',
+    padding: 10,
+    paddingLeft: 10,
+    borderRadius: 10,
+    opacity: .9,
+    marginBottom: '10%'
+
+  },
+  normalText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1E1E1E'
+  },
+  titleText: {
+    fontSize: 30,
+    marginTop: '20%',
+    marginBottom: '10%',
+    fontWeight: 'bold',
+    color: '#1E1E1E',
+    textAlign: 'center'
+  },
+  credentialsLogin: {
+    marginHorizontal: '10%'
+  },
+  loginButton: {
+    backgroundColor: '#FF8C00',
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 10
+  }
 });
