@@ -1,7 +1,34 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { View,Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Acceder = ({ navigation }) => {
+    const [myUsername, setmyUsername] = useState('');
+    
+    const AccederUser = () => {
+        if(myUsername === ""){
+            navigation.navigate('Login');
+        }else{
+            navigation.navigate('MainTabNavigator', {screen: 'Inicio'})
+        }
+    }
+    const readUsername = async () => {
+        try {
+          const myUsername =
+            await AsyncStorage.getItem('myUsername');
+          if (myUsername !== null) {
+            setmyUsername(myUsername);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+
+      useEffect(() => {
+        readUsername();
+      }, []);
     return (
         <View style={styles.container}>
 
@@ -11,8 +38,9 @@ const Acceder = ({ navigation }) => {
 
                 >
                     <Text style={styles.title}>ReactingFalles</Text>
+                    
                     <View style={styles.button_collocation}>
-                        <TouchableOpacity style={styles.button}  onPress={() => navigation.navigate('Login')} >
+                        <TouchableOpacity style={styles.button}  onPress={() => AccederUser()} >
                             <Text style={styles.buttonText}>Acceder</Text>
                         </TouchableOpacity>
                     </View>
