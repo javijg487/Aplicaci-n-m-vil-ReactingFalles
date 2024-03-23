@@ -5,17 +5,14 @@ import { DatosContext } from './Datos';
 import LottieView from 'lottie-react-native';
 
 const Lista_Fallas = ({ navigation }) => {
-    const { Distancia, toggleVisited, loadData, loadData_Infantiles, loadVisitedFallas } = useContext(DatosContext);
+    const { Distancia, toggleVisited, loadData, loadData_Infantiles } = useContext(DatosContext);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [page, setPage] = useState(1);
-
+ 
     useEffect(() => {
         const loadDataAsync = async () => {
-            await loadData();
-            await loadData_Infantiles();
-            
             setIsLoading(false);
         };
 
@@ -24,10 +21,9 @@ const Lista_Fallas = ({ navigation }) => {
 
     const loadMoreData = async () => {
         setPage(page + 1);
-        await loadData();
-        await loadData_Infantiles();
     };
-
+    
+    console.log("Distancia:"+ Distancia.length);
     const filteredData = Distancia.filter(item => {
         const propertiesToSearch = ["objectid", "id_falla", "nombre", "seccion", "fallera", "presidente", "artista", "lema", "tipo"];
         return propertiesToSearch.some(property => {
@@ -63,7 +59,7 @@ const Lista_Fallas = ({ navigation }) => {
             </View>
         </TouchableOpacity>
     );
-
+         console.log("Sorted data: "+sortedData.length);
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Lista de Fallas</Text>

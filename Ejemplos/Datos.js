@@ -11,20 +11,29 @@ export const DatosProvider = ({ children }) => {
     const [FallasInfantil, setFallasInfantil] = useState([]);
     const [combinedData, setCombinedData] = useState([]);  //Se inicializa con un array vacío
     const [Posicion, setPosicion] = useState(null);
-    const [Distancia, setDistancia] = useState(null);
+    const [Distancia, setDistancia] = useState();
+    const [loadVisitedFallasExecuted, setLoadVisitedFallasExecuted] = useState(true);
 
     useEffect(() => {
-        loadData();
-        loadData_Infantiles();
+        //loadData();
+        //loadData_Infantiles();
         obtenerPosicion();
 
     }, []);
 
+
     //Si Fallas o FallasInfantil cambian, se actualiza combinedData
     useEffect(() => {
         setCombinedData([...Fallas, ...FallasInfantil]);
-        loadVisitedFallas();
+        setLoadVisitedFallasExecuted(false);
     }, [Fallas, FallasInfantil]);
+
+    useEffect(() => {
+        if(combinedData.length>0 && !loadVisitedFallasExecuted){
+        loadVisitedFallas();
+        setLoadVisitedFallasExecuted(true);
+        }
+    }, [combinedData, loadVisitedFallasExecuted]);
 
     useEffect(() => {
         if (Posicion) {
@@ -84,7 +93,7 @@ export const DatosProvider = ({ children }) => {
 
 
                 }));
-
+                console.log("FallasMayow");
                 setFallas(fallasConTipo);
             });
     }
@@ -106,6 +115,7 @@ export const DatosProvider = ({ children }) => {
                     boceto: falla.boceto || "https://st2.depositphotos.com/1967477/6346/v/450/depositphotos_63462971-stock-illustration-sad-smiley-emoticon-cartoon.jpg"
                 }));
                 setFallasInfantil(fallasConTipo);
+                console.log("FallasINFA");
             });
     }
 
@@ -169,7 +179,7 @@ export const DatosProvider = ({ children }) => {
     }
 
     return (
-        <DatosContext.Provider value={{ combinedData, Fallas, FallasInfantil, toggleVisited, loadData, loadData_Infantiles, setFallas, setFallasInfantil, Distancia, FallasVisited }}>
+        <DatosContext.Provider value={{ combinedData, Fallas, FallasInfantil, toggleVisited, loadData, loadData_Infantiles, setFallas, setFallasInfantil, Distancia, FallasVisited, loadVisitedFallas }}>
             {children}
         </DatosContext.Provider>
     );
