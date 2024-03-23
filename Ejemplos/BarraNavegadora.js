@@ -15,7 +15,11 @@ function MainTabNavigator() {
         <Tab.Navigator screenOptions={{
             tabBarActiveTintColor: '#FF8C00',
             tabBarInactiveTintColor: 'gray',
-        }}>
+            tabBarStyle: { height: 80 },
+            tabBarLabelStyle: { fontSize: 13, fontWeight: 'bold', marginBottom: 12},
+        }}
+        
+        >
             <Tab.Screen
                 name="Inicio"
                 component={Inicio}
@@ -23,7 +27,7 @@ function MainTabNavigator() {
                     headerShown: false,
                     tabBarLabel: 'Inicio', //Podriamos ponerle mapa
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="location-sharp" color={color} size={size} />
+                        <Ionicons name="location-sharp" color={color} size={size + 6} />
                     )
                 }}
             />
@@ -34,7 +38,7 @@ function MainTabNavigator() {
                     headerShown: false,
                     tabBarLabel: 'Fallas',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="search" color={color} size={size} />
+                        <Ionicons name="search" color={color} size={size + 6} />
                     )
                 }}
             />
@@ -45,7 +49,7 @@ function MainTabNavigator() {
                     headerShown: false,
                     tabBarLabel: 'Visitado',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="star-outline" color={color} size={size} />
+                        <Ionicons name="star-outline" color={color} size={size+ 6} />
                         // <Ionicons name="flag" color={color} size={size} />
                     )
                 }}
@@ -57,7 +61,7 @@ function MainTabNavigator() {
                     headerShown: false,
                     tabBarLabel: 'Usuario',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="person-circle-outline" color={color} size={size} />
+                        <Ionicons name="person-circle-outline" color={color} size={size+ 6} />
                     )
                 }}
             />

@@ -12,7 +12,6 @@ export const DatosProvider = ({ children }) => {
     const [combinedData, setCombinedData] = useState([]);  //Se inicializa con un array vacío
     const [Posicion, setPosicion] = useState(null);
     const [Distancia, setDistancia] = useState(null);
-    const [FallasVisitadas, setFallasVisitadas] = useState([]);
 
     useEffect(() => {
         loadData();
@@ -129,7 +128,6 @@ export const DatosProvider = ({ children }) => {
             });
 
             setCombinedData(updatedVisitado);
-            setFallasVisitadas(updatedVisitado);
         } catch (error) {
             console.log(error);
         }
@@ -171,7 +169,7 @@ export const DatosProvider = ({ children }) => {
     }
 
     return (
-        <DatosContext.Provider value={{ combinedData, Fallas, FallasInfantil, toggleVisited, loadData, loadData_Infantiles, setFallas, setFallasInfantil, Distancia, FallasVisited, FallasVisitadas }}>
+        <DatosContext.Provider value={{ combinedData, Fallas, FallasInfantil, toggleVisited, loadData, loadData_Infantiles, setFallas, setFallasInfantil, Distancia, FallasVisited }}>
             {children}
         </DatosContext.Provider>
     );
