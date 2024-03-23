@@ -13,7 +13,8 @@ const Inicio = () => {
     useEffect(() => {
         const getCurrentLocation = async () => {
             let location = await Location.getCurrentPositionAsync({});
-            console.log(location);
+            
+            
             let region = {
                 latitude: parseFloat(location.coords.latitude),
                 longitude: parseFloat(location.coords.longitude),

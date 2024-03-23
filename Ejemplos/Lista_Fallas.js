@@ -5,7 +5,7 @@ import { DatosContext } from './Datos';
 import LottieView from 'lottie-react-native';
 
 const Lista_Fallas = ({ navigation }) => {
-    const { Distancia, toggleVisited, loadData, loadData_Infantiles } = useContext(DatosContext);
+    const { Distancia, toggleVisited, loadData, loadData_Infantiles, loadVisitedFallas } = useContext(DatosContext);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -15,6 +15,7 @@ const Lista_Fallas = ({ navigation }) => {
         const loadDataAsync = async () => {
             await loadData();
             await loadData_Infantiles();
+            
             setIsLoading(false);
         };
 

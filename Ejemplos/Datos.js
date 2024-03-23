@@ -24,12 +24,12 @@ export const DatosProvider = ({ children }) => {
     //Si Fallas o FallasInfantil cambian, se actualiza combinedData
     useEffect(() => {
         setCombinedData([...Fallas, ...FallasInfantil]);
+        loadVisitedFallas();
     }, [Fallas, FallasInfantil]);
 
     useEffect(() => {
         if (Posicion) {
             calcularDistancia(Posicion); // Si tienes la posición, calcula la distancia
-            loadVisitedFallas();
         }
         requestLocationPermission();
     }, [Posicion, combinedData]);
@@ -110,6 +110,31 @@ export const DatosProvider = ({ children }) => {
             });
     }
 
+    const loadVisitedFallas = async () => {
+        try {
+            const keys = await AsyncStorage.getAllKeys();
+            const visitedFallasKeys = keys.filter(key => key.startsWith('Fallas_Visitadas_'));
+            const parsedData = await Promise.all(visitedFallasKeys.map(async key => {
+                const value = await AsyncStorage.getItem(key);
+                console.log('value:', value);
+                return JSON.parse(value);
+            }));
+
+            const updatedVisitado = combinedData.map(item => {
+                const index = parsedData.findIndex(parsedItem => parsedItem.objectid === item.objectid);
+                if (index !== -1) {
+                    return { ...item, visitado: true };
+                }
+                return item;
+            });
+
+            setCombinedData(updatedVisitado);
+            setFallasVisitadas(updatedVisitado);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     const toggleVisited = (falla) => {
         const index = Distancia.findIndex(item => item.objectid === falla.objectid); //Sino encuentra el objeto, devuelve -1
         if (index !== -1) {
@@ -124,35 +149,8 @@ export const DatosProvider = ({ children }) => {
                 AsyncStorage.removeItem(`Fallas_Visitadas_${falla.objectid}`);
             }
             setDistancia(updatedData); //setCombinedData(updatedData);
-            loadVisitedFallas();
         }
     };
-
-    const loadVisitedFallas = async () => {
-        try {
-            const keys = await AsyncStorage.getAllKeys();
-            const visitedFallasKeys = keys.filter(key => key.startsWith('Fallas_Visitadas_'));
-            const parsedData = await Promise.all(visitedFallasKeys.map(async key => {
-                const value = await AsyncStorage.getItem(key);
-                console.log('value:', value);
-                return JSON.parse(value);
-            }));
-
-            const updatedVisitado = Distancia.map(item => {
-                const index = parsedData.findIndex(parsedItem => parsedItem.objectid === item.objectid);
-                if (index !== -1) {
-                    return { ...item, visitado: true };
-                }
-                return item;
-            });
-
-            setDistancia(updatedVisitado);
-            setFallasVisitadas(updatedVisitado);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
 
     const FallasVisited = () => {
         const visited = Distancia.filter(item => item.visitado === true);
