@@ -24,8 +24,11 @@ export const DatosProvider = ({ children }) => {
 
     //Si Fallas o FallasInfantil cambian, se actualiza combinedData
     useEffect(() => {
-        setCombinedData([...Fallas, ...FallasInfantil]);
-        setLoadVisitedFallasExecuted(false);
+        if(Fallas.length > 0 && FallasInfantil.length > 0){
+            setCombinedData([...Fallas, ...FallasInfantil]);
+            setLoadVisitedFallasExecuted(false);
+        }
+        
     }, [Fallas, FallasInfantil]);
 
     useEffect(() => {

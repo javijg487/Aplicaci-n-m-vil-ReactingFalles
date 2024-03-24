@@ -27,7 +27,7 @@ const Usuario = ({ navigation }) => {
       };
     const cerrarSesion = () => {
         eliminarUsuario();
-        navigation.navigate('Acceder');
+        navigation.navigate('Login');
     }
 
       useEffect(() => {
