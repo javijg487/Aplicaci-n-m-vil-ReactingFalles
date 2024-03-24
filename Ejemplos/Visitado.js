@@ -88,9 +88,12 @@ const Visitado = ({ navigation }) => {
                                     <View>
                                         <Text style={styles.textItem}>{item.nombre}</Text>
                                         <Text>{item.tipo} - {item.seccion}</Text>
-                                        <Text>Visitado: {item.visitado ? 'Si' : 'No'}</Text>
                                         <Text>Distancia: {item.distancia} Km</Text>
                                     </View>
+                                    <TouchableOpacity style={styles.flagButton} onPress={() => toggleVisited(item)}>
+                                        <Ionicons name="star" color={item.visitado ? '#FF8C00' : 'gray'} size={50} />
+                                        {/*<Ionicons name="flag" color={item.visitado ? '#FF8C00' : 'gray'} size={50} /> */}
+                                    </TouchableOpacity>
                                 </View>
                             </TouchableOpacity>
                         )
@@ -167,7 +170,14 @@ const styles = StyleSheet.create({
     },
     button: {
         padding: 10,
-    }
+    },
+    flagButton: {
+        position: 'absolute',
+        top: 35,
+        right: 20,
+
+    },
+
 });
 
 export default Visitado;

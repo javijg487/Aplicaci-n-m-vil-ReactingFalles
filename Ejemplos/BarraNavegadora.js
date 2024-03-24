@@ -50,7 +50,7 @@ function MainTabNavigator() {
                     tabBarLabel: 'Visitado',
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="star-outline" color={color} size={size+ 6} />
-                        // <Ionicons name="flag" color={color} size={size} />
+                        //<Ionicons name="flag" color={color} size={size +6 } />
                     )
                 }}
             />

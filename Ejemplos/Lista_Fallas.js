@@ -54,15 +54,20 @@ const Lista_Fallas = ({ navigation }) => {
     }
 
     const renderItem = ({ item }) => (
-        <TouchableOpacity onPress={() => toggleVisited(item)}>
+        <TouchableOpacity onPress={() => navigation.navigate('MainTabNavigator', { screen: 'Usuario' })}>
             <View style={styles.itemContainer}>
+
                 <Image style={styles.itemImage} source={{ uri: item.boceto }} />
+
                 <View>
                     <Text style={styles.textItem}>{item.nombre}</Text>
                     <Text>{item.tipo} - {item.seccion}</Text>
-                    <Text>Visitado: {item.visitado ? 'Si' : 'No'}</Text>
                     <Text>Distancia: {item.distancia} Km</Text>
                 </View>
+                <TouchableOpacity style={styles.flagButton} onPress={() => toggleVisited(item)}>
+                    <Ionicons name="star" color={item.visitado ? '#FF8C00' : 'gray'} size={50} />
+                    {/* <Ionicons name="flag" color={item.visitado ? '#FF8C00' : 'gray'} size={50} /> */}
+                </TouchableOpacity>
             </View>
         </TouchableOpacity>
     );
@@ -139,11 +144,11 @@ const Lista_Fallas = ({ navigation }) => {
                     </View>
                     <View
                         style={{
-                            flex:1,
+                            flex: 1,
                             borderBottomColor: 'black',
                             borderBottomWidth: StyleSheet.hairlineWidth,
-                            opacity:0.2,
-                            width:'100%',
+                            opacity: 0.2,
+                            width: '100%',
                             marginBottom: 20
                         }}
                     />
@@ -232,6 +237,7 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#D4D2D2',
         borderRadius: 10,
+        position: 'relative',
     },
     itemImage: {
         width: 50,
@@ -309,7 +315,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#FF8C00',
         fontSize: 15
-    }
+    },
+
+    flagButton: {
+        position: 'absolute',
+        top: 35,
+        right: 20,
+
+    },
 
 
 

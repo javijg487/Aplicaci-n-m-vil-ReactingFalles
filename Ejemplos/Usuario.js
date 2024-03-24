@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   containerList: {
     flexDirection: 'row',
     backgroundColor: '#E4E4E5',
-    width: '100%', // Ancho del contenedor al 100% del padre
+    width: '100%', 
     height: 100,
     padding: 10,
     borderBottomWidth: 1,
@@ -121,7 +121,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: 100, 
     height: 80 
-
   },
 });
 export default Usuario;
