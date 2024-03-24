@@ -106,6 +106,7 @@ const Visitado = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#fff',
     },
     searchContainer: {
         flexDirection: 'row',

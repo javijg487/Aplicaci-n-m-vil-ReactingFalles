@@ -40,7 +40,7 @@ function MyStack() {
                 <LottieView style={{
                     width: 100,
                     height: 100,
-                }} source={require('../assets/loading.json')} autoPlay loop />
+                }} source={require('../assets/Loading_Fire.json')} autoPlay loop />
             </View>
         );
     }
@@ -61,13 +61,15 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#ff8c00',
+        backgroundColor: '#1a1918',
     },
     overlayImage: {
         position: 'absolute',
-        width: '50%', 
+        width: '100%', 
         height: '50%', 
-        resizeMode: 'cover', 
+        resizeMode: 'contain',
+        alignSelf: 'center',
+        top: '25%',
     },
     loadingText: {
         color: 'white',

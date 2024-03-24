@@ -15,8 +15,6 @@ export const DatosProvider = ({ children }) => {
     const [loadVisitedFallasExecuted, setLoadVisitedFallasExecuted] = useState(true);
 
     useEffect(() => {
-        //loadData();
-        //loadData_Infantiles();
         obtenerPosicion();
 
     }, []);

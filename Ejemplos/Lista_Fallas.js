@@ -31,7 +31,6 @@ const Lista_Fallas = ({ navigation }) => {
         setPage(page + 1);
     };
 
-    console.log("Distancia:" + Distancia.length);
     const filteredData = Distancia.filter(item => {
         const propertiesToSearch = ["objectid", "id_falla", "nombre", "seccion", "fallera", "presidente", "artista", "lema", "tipo"];
         return propertiesToSearch.some(property => {
@@ -67,7 +66,6 @@ const Lista_Fallas = ({ navigation }) => {
             </View>
         </TouchableOpacity>
     );
-    console.log("Sorted data: " + sortedData.length);
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Lista de Fallas</Text>
