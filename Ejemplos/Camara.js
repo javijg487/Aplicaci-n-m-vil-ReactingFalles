@@ -2,8 +2,16 @@ import { CameraView, useCameraPermissions } from 'expo-camera/next';
 import { View } from 'react-native';
 export default function ExpoCameraDemo() {
     const [permission, requestPermission] = useCameraPermissions();
+    
     // if (!permission) ...
     // if (!permission.granted) ...
+    if (!permission || !permission.granted) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Button title="Solicitar permisos de cámara" onPress={() => requestPermission()} />
+            </View>
+        );
+    }
     return (
         <View style={{ flex: 1 }}>
             <CameraView style={{ flex: 1 }}

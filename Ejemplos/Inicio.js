@@ -1,20 +1,20 @@
-import React, { useContext, useEffect, useState} from 'react';
-import { StyleSheet, Alert} from 'react-native';
-import {Marker } from 'react-native-maps';
+import React, { useContext, useEffect, useState } from 'react';
+import { StyleSheet, Alert } from 'react-native';
+import { Marker } from 'react-native-maps';
 import MapView from "react-native-map-clustering";
 import * as Location from 'expo-location';
-import {DatosContext} from './Datos';
+import { DatosContext } from './Datos';
 
 
 const Inicio = () => {
-    const {combinedData} = useContext(DatosContext);
+    const { combinedData, calcularDistancia } = useContext(DatosContext);
     const mapView = React.useRef(null);
 
     useEffect(() => {
         const getCurrentLocation = async () => {
             let location = await Location.getCurrentPositionAsync({});
-            
-            
+
+            calcularDistancia(location);
             let region = {
                 latitude: parseFloat(location.coords.latitude),
                 longitude: parseFloat(location.coords.longitude),
@@ -22,7 +22,7 @@ const Inicio = () => {
                 longitudeDelta: 0.01
             };
             // setRegion con animación
-            
+
             mapView.current.animateToRegion(region, 2000);
         }
 
@@ -33,8 +33,15 @@ const Inicio = () => {
                 return;
             }
         };
-        requestLocationPermission();
-        getCurrentLocation();
+
+        const initMap = async () => {
+            await requestLocationPermission();
+            getCurrentLocation();
+        };
+
+        initMap();
+
+
     }, []);
 
     return (
@@ -51,20 +58,20 @@ const Inicio = () => {
                 longitudeDelta: 1.01,
             }}
 
-        >   
-        {combinedData.map((falla) => (
-            <Marker
-                key={falla.objectid}
-                coordinate={{
-                    latitude: falla.geo_point_2d.lat,
-                    longitude: falla.geo_point_2d.lon
-                }}
-                title={falla.nombre}
-                description={falla.tipo}
-                pinColor={falla.tipo === "Mayor" ? 'red' : 'green'}
-            /> 
-        ))}
-            
+        >
+            {combinedData.map((falla) => (
+                <Marker
+                    key={falla.objectid}
+                    coordinate={{
+                        latitude: falla.geo_point_2d.lat,
+                        longitude: falla.geo_point_2d.lon
+                    }}
+                    title={falla.nombre}
+                    description={falla.tipo}
+                    pinColor={falla.tipo === "Mayor" ? 'red' : 'green'}
+                />
+            ))}
+
             {/*… Aquí los componentes personalizados …*/}
         </MapView>
     );

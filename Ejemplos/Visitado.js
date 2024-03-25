@@ -13,13 +13,19 @@ const Visitado = ({ navigation }) => {
 
     useEffect(() => {
         const loadDataAsync = async () => {
+            
             await FallasVisited();
+            console.log("Fallas_VisitadasUSEEFFET");
             setIsLoading(false);
         };
 
         loadDataAsync();
     }, []);
+
+
     const Fallas_Visitadas = FallasVisited();
+    console.log("Fallas_Visitadas");
+    console.log( Fallas_Visitadas);  
     const filteredData = Fallas_Visitadas.filter(item => {
         const propertiesToSearch = ["objectid", "id_falla", "nombre", "seccion", "fallera", "presidente", "artista", "lema", "tipo"];
         return propertiesToSearch.some(property => {

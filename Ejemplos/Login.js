@@ -1,43 +1,16 @@
 
 import { TouchableOpacity, StyleSheet, Text, View, TextInput, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useState, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
+import { DatosContext } from './Datos';
 //import { Divider } from '@rneui/themed';
 //<Divider inset={true} insetType="middle" ></Divider>
 
 
 
 export default function Login({ navigation }) {
-
-  const [myUsername, setmyUsername] = useState('');
-
-  const saveUsername = async () => {
-    try {
-      await AsyncStorage.setItem(
-        'myUsername',
-        myUsername
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const readUsername = async () => {
-    try {
-      const value =
-        await AsyncStorage.getItem('myUsername');
-      if (value !== null) {
-        setmyUsername(value);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    readUsername();
-  }, []);
-
+  const {myUsername,saveUsername} = useContext(DatosContext);
+  const [inputUsername, setInputUsername] = useState('');
   return (
     <View style={styles.background}>
       <View style={styles.container}>
@@ -54,11 +27,11 @@ export default function Login({ navigation }) {
 
         <View style={styles.credentialsLogin}>
           <Text style={styles.normalText}>Usuario</Text>
-          <TextInput style={styles.input} onChangeText={text => setmyUsername(text)} value={myUsername} />
+          <TextInput style={styles.input} onChangeText={text =>setInputUsername(text)} value={inputUsername} />
 
           <TouchableOpacity style={styles.loginButton}
           onPress={() => {
-            saveUsername();
+            saveUsername(inputUsername);
             navigation.navigate('MainTabNavigator', {screen: 'Inicio'})
           }}>
             <Text style={[styles.normalText, { textAlign: 'center', fontSize: 18, fontWeight: 'bold', color: 'white' }]}>Iniciar sesión</Text>
