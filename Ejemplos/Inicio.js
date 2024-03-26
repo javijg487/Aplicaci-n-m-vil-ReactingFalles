@@ -11,38 +11,39 @@ const Inicio = () => {
     const mapView = React.useRef(null);
 
     useEffect(() => {
-        const getCurrentLocation = async () => {
-            let location = await Location.getCurrentPositionAsync({});
-
-            calcularDistancia(location);
-            let region = {
-                latitude: parseFloat(location.coords.latitude),
-                longitude: parseFloat(location.coords.longitude),
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01
-            };
-            // setRegion con animación
-
-            mapView.current.animateToRegion(region, 2000);
-        }
-
-        const requestLocationPermission = async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                Alert.alert('No hay permisos de localización')
-                return;
-            }
-        };
-
-        const initMap = async () => {
-            await requestLocationPermission();
-            getCurrentLocation();
-        };
 
         initMap();
-
-
     }, []);
+
+    const getCurrentLocation = async () => {
+        let location = await Location.getCurrentPositionAsync({});
+
+        calcularDistancia(location);
+        let region = {
+            latitude: parseFloat(location.coords.latitude),
+            longitude: parseFloat(location.coords.longitude),
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01
+        };
+        // setRegion con animación
+
+        mapView.current.animateToRegion(region, 2000);
+    }
+
+    const requestLocationPermission = async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('No hay permisos de localización')
+            return;
+        }
+    };
+
+    const initMap = async () => {
+        await requestLocationPermission();
+        getCurrentLocation();
+    };
+
+    
 
     return (
         <MapView
