@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { DatosContext } from './Datos';
 import LottieView from 'lottie-react-native';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { Picker } from '@react-native-picker/picker';
 
 const windowHeight = Dimensions.get('window').height;
 console.log(windowHeight)
@@ -19,6 +20,10 @@ const Lista_Fallas = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [page, setPage] = useState(1);
 
+    // Se usa para usarlo en el Picker de los filtros en Lista_Fallas
+    const secciones = new Set();
+    const listaSecciones = [];
+
     useEffect(() => {
         const loadDataAsync = async () => {
             await fallasCompletas();
@@ -31,6 +36,29 @@ const Lista_Fallas = ({ navigation }) => {
     const loadMoreData = async () => {
         setPage(page + 1);
     };
+
+
+    //Se almacenan las secciones unicas
+    Distancia.forEach(falla => {
+        if (!secciones.has(falla.seccion)) {
+            if (falla.seccion != "Sección no disponible") {
+                secciones.add(falla.seccion);
+                listaSecciones.push(falla.seccion);
+            }
+        }
+    });
+
+    console.log(listaSecciones[0]);
+
+    const filteredData = Distancia.filter(item => {
+        const propertiesToSearch = ["objectid", "id_falla", "nombre", "seccion", "fallera", "presidente", "artista", "lema", "tipo"];
+        return propertiesToSearch.some(property => {
+            const value = item[property];
+            return value && typeof value === 'string' && value.toLowerCase().includes(searchTerm.toLowerCase());
+        });
+    });
+
+    const sortedData = filteredData.sort((a, b) => a.distancia - b.distancia);
 
     if (isLoading) {
         return (
@@ -136,10 +164,12 @@ const Lista_Fallas = ({ navigation }) => {
 
                     <View style={{ flexDirection: 'row', marginTop: 40, }}>
                         <Text style={{ marginBottom: 2, marginRight: 20, fontSize: 15 }}>Seccion</Text>
+
                         <TouchableOpacity style={[styles.buttonFilter, styles.shadowBoxFilter]}>
                             <Text style={{ fontWeight: 'bold', fontSize: 15 }}>Todas</Text>
                         </TouchableOpacity>
                     </View>
+
 
                     <View style={{ marginVertical: 30, flexDirection: 'row' }}>
                         <Text style={{ marginRight: 20, fontSize: 15 }}>Ordenar</Text>
@@ -287,7 +317,7 @@ const styles = StyleSheet.create({
     fixList: {
         flex: 1,
         zIndex: 1,
-        marginTop: windowHeight * -.573,
+        marginTop: windowHeight * -.491,
         backgroundColor: "white"
     },
     shadowBox: {
