@@ -8,7 +8,7 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 const windowHeight = Dimensions.get('window').height;
 console.log(windowHeight)
 const Lista_Fallas = ({ navigation }) => {
-    const { Distancia, toggleVisited, fallasCompletas} = useContext(DatosContext);
+    const { toggleVisited, fallasCompletas} = useContext(DatosContext);
 
     const [checkBoxInfantil, setCheckBoxInfantil] = useState(false);
     const [checkBoxMayor, setCheckBoxMayor] = useState(false);
