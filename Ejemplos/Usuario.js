@@ -1,45 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, TextInput, FlatList, ActivityIndicator, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
+import { DatosContext } from './Datos';
+
 const Usuario = ({ navigation }) => {
-  const [myUsername, setmyUsername] = useState('');
-
-  useEffect(() => {
-    readUsername();
-  }, []);
-
-  const eliminarUsuario = async () => {
+  const {myUsername, saveUsername,clearUserData,loadVisitedFallas} = useContext(DatosContext);
+  
+  const cerrarSesion = async () => {
     try {
-      await AsyncStorage.removeItem('myUsername');
-      setmyUsername('');
-
+      
+      await saveUsername("");
+      await clearUserData();
+      console.log('Sesión cerrada:', myUsername); 
+      navigation.navigate('Acceder'); 
     } catch (error) {
       console.log(error);
     }
-  };
-  const readUsername = async () => {
-    try {
-      const myUsername =
-        await AsyncStorage.getItem('myUsername');
-      if (myUsername !== null) {
-        setmyUsername(myUsername);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const cerrarSesion = () => {
-    eliminarUsuario();
-    navigation.navigate('Acceder');
   }
-  const cambiarUsuario = () => {
-    eliminarUsuario();
+  const cambiarUsuario = async () => {
+    await loadVisitedFallas();
+    console.log('Cambiar Usuario'+ myUsername);
     navigation.navigate('Login');
   };
 
-
-
+  console.log('Usuario:', myUsername);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.titleContainer}>

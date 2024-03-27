@@ -6,11 +6,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Acceder = ({ navigation }) => {
     const [myUsername, setmyUsername] = useState('');
     
-    const AccederUser = () => {
-        if(myUsername === ""){
-            navigation.navigate('Login');
-        }else{
+    const AccederUser =  () => {
+        if(myUsername !== ""){
             navigation.navigate('MainTabNavigator', {screen: 'Inicio'})
+            setmyUsername("");
+        }else{
+            navigation.navigate('Login');
+            setmyUsername("");
+            
         }
     }
     const readUsername = async () => {
