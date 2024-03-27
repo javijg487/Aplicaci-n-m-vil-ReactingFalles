@@ -11,7 +11,7 @@ export const DatosProvider = ({ children }) => {
     const [FallasInfantil, setFallasInfantil] = useState([]);
     const [combinedData, setCombinedData] = useState([]);  //Se inicializa con un array vacío
     const [Posicion, setPosicion] = useState(null);
-    const [Distancia, setDistancia] = useState();
+    const [Distancia, setDistancia] = useState([]);
     const [loadVisitedFallasExecuted, setLoadVisitedFallasExecuted] = useState(true);
 
     useEffect(() => {
