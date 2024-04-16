@@ -9,6 +9,7 @@ export const DatosContext = createContext();
 export const DatosProvider = ({ children }) => {
     const [Fallas, setFallas] = useState([]);
     const [FallasInfantil, setFallasInfantil] = useState([]);
+    const [Secciones, setSecciones] = useState([]);
     const [combinedData, setCombinedData] = useState([]);  //Se inicializa con un array vacío
     const [Distancia, setDistancia] = useState([]);
     const [loadVisitedFallasExecuted, setLoadVisitedFallasExecuted] = useState(true);
@@ -100,7 +101,6 @@ export const DatosProvider = ({ children }) => {
                 const fallasConTipo = responseJson.map(falla => ({
                     ...falla,
                     tipo: "Mayor",
-
                     nombre: falla.nombre || "Nombre no disponible",
                     seccion: falla.seccion || "Sección no disponible",
                     fallera: falla.fallera || "Fallera no disponible",
@@ -108,13 +108,21 @@ export const DatosProvider = ({ children }) => {
                     artista: falla.artista || "Artista no disponible",
                     lema: falla.lema || "Lema no disponible",
                     boceto: falla.boceto || "https://st2.depositphotos.com/1967477/6346/v/450/depositphotos_63462971-stock-illustration-sad-smiley-emoticon-cartoon.jpg"
-
-
                 }));
-                console.log("FallasMayow");
+    
+                const seccionesSinRepetir = fallasConTipo.reduce((secciones, falla) => {
+                    if(!secciones.includes(falla.seccion) && falla.seccion != "Sección no disponible"){
+                        secciones.push(falla.seccion);
+                    }
+                    return secciones;
+                }, []);
+                
+                console.log("FallasMayor");
                 setFallas(fallasConTipo);
+                setSecciones(seccionesSinRepetir);
             });
     }
+    
 
 
     const loadData_Infantiles = () => {
@@ -212,7 +220,7 @@ export const DatosProvider = ({ children }) => {
 
 
     return (
-        <DatosContext.Provider value={{ combinedData, Fallas, FallasInfantil, toggleVisited, loadData, loadData_Infantiles, Distancia, FallasVisited,loadVisitedFallas,calcularDistancia,fallasCompletas,myUsername,saveUsername,clearUserData}}>
+        <DatosContext.Provider value={{ combinedData, Fallas, FallasInfantil, toggleVisited, loadData, loadData_Infantiles, Distancia, FallasVisited,loadVisitedFallas,calcularDistancia,fallasCompletas,myUsername,saveUsername,clearUserData, Secciones}}>
             {children}
         </DatosContext.Provider>
     );

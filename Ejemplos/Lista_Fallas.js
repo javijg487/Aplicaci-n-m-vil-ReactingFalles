@@ -1,28 +1,23 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, TextInput, FlatList, ActivityIndicator, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, TextInput, FlatList, ActivityIndicator, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { DatosContext } from './Datos';
 import LottieView from 'lottie-react-native';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-import { Picker } from '@react-native-picker/picker';
+import ModalDropdown from 'react-native-modal-dropdown';
 
-const windowHeight = Dimensions.get('window').height;
-console.log(windowHeight)
 const Lista_Fallas = ({ navigation }) => {
-    const { toggleVisited, fallasCompletas} = useContext(DatosContext);
-
+    const { toggleVisited, fallasCompletas, Secciones } = useContext(DatosContext);
     const [checkBoxInfantil, setCheckBoxInfantil] = useState(false);
     const [checkBoxMayor, setCheckBoxMayor] = useState(false);
     const [checkBoxVisitado, setCheckBoxVisitado] = useState(false);
     const [ShowFilter, setShowFilter] = useState(false);
-    const [fixList, setFixList] = useState(false)
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [page, setPage] = useState(1);
-
-    // Se usa para usarlo en el Picker de los filtros en Lista_Fallas
-    const secciones = new Set();
-    const listaSecciones = [];
+    const [modalVisible, setModalVisible] = useState(false);
+    const [section, setSection] = useState('Todas');
+    const [order, setOrder] = useState('Cercanía');
 
     useEffect(() => {
         const loadDataAsync = async () => {
@@ -37,11 +32,6 @@ const Lista_Fallas = ({ navigation }) => {
         setPage(page + 1);
     };
 
-
-    
-
-    
-
     if (isLoading) {
         return (
             <View style={styles.loadingContainer}>
@@ -54,8 +44,8 @@ const Lista_Fallas = ({ navigation }) => {
         );
     }
 
-    
-   const fallas_Distancia = fallasCompletas();
+
+    const fallas_Distancia = fallasCompletas();
     const filteredData = fallas_Distancia.filter(item => {
         const propertiesToSearch = ["objectid", "id_falla", "nombre", "seccion", "fallera", "presidente", "artista", "lema", "tipo"];
         return propertiesToSearch.some(property => {
@@ -65,18 +55,6 @@ const Lista_Fallas = ({ navigation }) => {
     });
 
     const sortedData = filteredData.sort((a, b) => a.distancia - b.distancia);
-
-    //Se almacenan las secciones unicas
-    fallas_Distancia.forEach(falla => {
-        if (!secciones.has(falla.seccion)) {
-            if (falla.seccion != "Sección no disponible") {
-                secciones.add(falla.seccion);
-                listaSecciones.push(falla.seccion);
-            }
-        }
-    });
-
-    console.log(listaSecciones[0]);
 
     const renderItem = ({ item }) => (
         <TouchableOpacity onPress={() => navigation.navigate('MainTabNavigator', { screen: 'Usuario' })}>
@@ -111,13 +89,14 @@ const Lista_Fallas = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={() => {
                     setShowFilter(!ShowFilter);
-                    setFixList(!fixList)
+                    setModalVisible(!modalVisible)
                 }}>
                     <Ionicons name="funnel" size={30} color="black" />
                 </TouchableOpacity>
             </View>
 
-            {ShowFilter ? (
+            {/* --------- VIEW DEL FILTRO -----------*/}
+            <Modal animationType="slide" transparent={true} visible={modalVisible}>
                 <View style={[styles.openFilter, styles.shadowBox]}>
                     <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: 30, marginLeft: -5 }}> Filtro de búsqueda</Text>
                     <BouncyCheckbox
@@ -155,19 +134,30 @@ const Lista_Fallas = ({ navigation }) => {
                     />
 
                     <View style={{ flexDirection: 'row', marginTop: 40, }}>
-                        <Text style={{ marginBottom: 2, marginRight: 20, fontSize: 15 }}>Seccion</Text>
-
-                        <TouchableOpacity style={[styles.buttonFilter, styles.shadowBoxFilter]}>
-                            <Text style={{ fontWeight: 'bold', fontSize: 15 }}>Todas</Text>
-                        </TouchableOpacity>
+                        <Text style={{ marginBottom: 2, marginRight: 20, fontSize: 15 }}>Sección</Text>
+                        <ModalDropdown style={[styles.buttonFilter, styles.shadowBoxFilter]} 
+                        options={['Todas', ...Secciones]}
+                        defaultIndex={0}
+                        defaultValue='Todas'
+                        textStyle={{fontWeight: 'bold', fontSize: 15}}
+                        dropdownStyle={{padding: 10, height: 220}}
+                        dropdownTextStyle={{fontSize: 15, color:'black'}}
+                        dropdownTextHighlightStyle={{color:'#FF8C00'}}
+                        onSelect={(value) => setSection(value)}/>
                     </View>
 
 
                     <View style={{ marginVertical: 30, flexDirection: 'row' }}>
                         <Text style={{ marginRight: 20, fontSize: 15 }}>Ordenar</Text>
-                        <TouchableOpacity style={[styles.buttonFilter, styles.shadowBoxFilter]}>
-                            <Text style={{ fontWeight: 'bold', fontSize: 15, }}>Cercania</Text>
-                        </TouchableOpacity>
+                        <ModalDropdown style={[styles.buttonFilter, styles.shadowBoxFilter]} 
+                        options={['Cercanía', 'Lejanía']}
+                        defaultIndex={0}
+                        defaultValue='Cercanía'
+                        textStyle={{fontWeight: 'bold', fontSize: 15}}
+                        dropdownStyle={{padding: 10, height: 100}}
+                        dropdownTextStyle={{fontSize: 15, color:'black'}}
+                        dropdownTextHighlightStyle={{color:'#FF8C00'}}
+                        onSelect={(value) => setOrder(value)}/>
                     </View>
                     <View
                         style={{
@@ -185,44 +175,33 @@ const Lista_Fallas = ({ navigation }) => {
                             setCheckBoxMayor(false);
                             setCheckBoxVisitado(false);
                             setShowFilter(false);
-                            setFixList(!fixList)
+                            setModalVisible(!modalVisible);
+
                         }}>
                             <Text style={styles.buttonFilterText}>Cancelar</Text>
                         </TouchableOpacity >
 
-                        <TouchableOpacity style={styles.buttonFilter}>
-                            <Text style={styles.buttonFilterText}>Aplicar</Text>
+                        <TouchableOpacity style={styles.buttonFilter} onPress={() => {
+                            setModalVisible(!modalVisible);
+                        }}>
+                            <Text style={styles.buttonFilterText} >Aplicar</Text>
                         </TouchableOpacity>
                     </View>
-
-
-
                 </View>
-            ) : null}
+            </Modal>
 
-            {fixList ? (
-                <View style={styles.fixList}>
-                    <FlatList
-                        data={sortedData}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.objectid.toString()}
-                        onEndReached={loadMoreData} // Detectar cuando el usuario llega al final de la lista
-                        onEndReachedThreshold={0.1} // Porcentaje de la longitud de la lista en el que se llama a onEndReached
-                        ListFooterComponent={isLoading && <ActivityIndicator
-                        />} // Indicador de carga al final de la lista
-                    />
-                </View>) : (
-                <View >
-                    <FlatList
-                        data={sortedData}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.objectid.toString()}
-                        onEndReached={loadMoreData} // Detectar cuando el usuario llega al final de la lista
-                        onEndReachedThreshold={0.1} // Porcentaje de la longitud de la lista en el que se llama a onEndReached
-                        ListFooterComponent={isLoading && <ActivityIndicator
-                        />} // Indicador de carga al final de la lista
-                    />
-                </View>)}
+            {/* --------- VIEW DE LA LISTA DE FALLAS -----------*/}
+            <View >
+                <FlatList
+                    data={sortedData}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.objectid.toString()}
+                    onEndReached={loadMoreData} // Detectar cuando el usuario llega al final de la lista
+                    onEndReachedThreshold={0.1} // Porcentaje de la longitud de la lista en el que se llama a onEndReached
+                    ListFooterComponent={isLoading && <ActivityIndicator
+                    />} // Indicador de carga al final de la lista
+                />
+            </View>
 
         </SafeAreaView>
     );
@@ -303,14 +282,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         alignSelf: 'center',
         borderRadius: 20,
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
+        marginTop: '30%'
 
-    },
-    fixList: {
-        flex: 1,
-        zIndex: 1,
-        marginTop: windowHeight * -.491,
-        backgroundColor: "white"
     },
     shadowBox: {
         shadowColor: '#1E1E1E',
@@ -332,6 +306,8 @@ const styles = StyleSheet.create({
     },
     buttonFilter: {
         backgroundColor: '#D9D9D9',
+        width: 90,
+        height: 30,
         marginHorizontal: 10,
         paddingHorizontal: 10,
         paddingVertical: 5,
@@ -351,8 +327,9 @@ const styles = StyleSheet.create({
 
     },
 
-
-
+    modalStyle: {
+        marginTop: 20
+    }
 });
 
 export default Lista_Fallas;
