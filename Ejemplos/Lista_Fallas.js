@@ -9,7 +9,7 @@ import { Picker } from '@react-native-picker/picker';
 const windowHeight = Dimensions.get('window').height;
 console.log(windowHeight)
 const Lista_Fallas = ({ navigation }) => {
-    const { Distancia, toggleVisited, fallasCompletas} = useContext(DatosContext);
+    const { toggleVisited, fallasCompletas} = useContext(DatosContext);
 
     const [checkBoxInfantil, setCheckBoxInfantil] = useState(false);
     const [checkBoxMayor, setCheckBoxMayor] = useState(false);
@@ -38,27 +38,9 @@ const Lista_Fallas = ({ navigation }) => {
     };
 
 
-    //Se almacenan las secciones unicas
-    Distancia.forEach(falla => {
-        if (!secciones.has(falla.seccion)) {
-            if (falla.seccion != "Sección no disponible") {
-                secciones.add(falla.seccion);
-                listaSecciones.push(falla.seccion);
-            }
-        }
-    });
+    
 
-    console.log(listaSecciones[0]);
-
-    const filteredData = Distancia.filter(item => {
-        const propertiesToSearch = ["objectid", "id_falla", "nombre", "seccion", "fallera", "presidente", "artista", "lema", "tipo"];
-        return propertiesToSearch.some(property => {
-            const value = item[property];
-            return value && typeof value === 'string' && value.toLowerCase().includes(searchTerm.toLowerCase());
-        });
-    });
-
-    const sortedData = filteredData.sort((a, b) => a.distancia - b.distancia);
+    
 
     if (isLoading) {
         return (
@@ -84,7 +66,17 @@ const Lista_Fallas = ({ navigation }) => {
 
     const sortedData = filteredData.sort((a, b) => a.distancia - b.distancia);
 
-    
+    //Se almacenan las secciones unicas
+    fallas_Distancia.forEach(falla => {
+        if (!secciones.has(falla.seccion)) {
+            if (falla.seccion != "Sección no disponible") {
+                secciones.add(falla.seccion);
+                listaSecciones.push(falla.seccion);
+            }
+        }
+    });
+
+    console.log(listaSecciones[0]);
 
     const renderItem = ({ item }) => (
         <TouchableOpacity onPress={() => navigation.navigate('MainTabNavigator', { screen: 'Usuario' })}>
