@@ -7,27 +7,74 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import ModalDropdown from 'react-native-modal-dropdown';
 
 const Lista_Fallas = ({ navigation }) => {
-    const { toggleVisited, fallasCompletas, Secciones } = useContext(DatosContext);
-    const [checkBoxInfantil, setCheckBoxInfantil] = useState(false);
-    const [checkBoxMayor, setCheckBoxMayor] = useState(false);
-    const [checkBoxVisitado, setCheckBoxVisitado] = useState(false);
+    const { toggleVisited, fallasCompletas, Secciones, FallasVisited } = useContext(DatosContext);
+    
+    const [checkBoxInfantil, setCheckBoxInfantil] = useState(true);
+    const [checkBoxMayor, setCheckBoxMayor] = useState(true);
+    const [checkBoxVisitado, setCheckBoxVisitado] = useState(true);
     const [ShowFilter, setShowFilter] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
-    const [page, setPage] = useState(1);
     const [modalVisible, setModalVisible] = useState(false);
     const [section, setSection] = useState('Todas');
-    const [order, setOrder] = useState('Cercanía');
+    const [sortedData, setSortedData] = useState([]);
+    
+    const [order, setOrder] = useState(false); // false para distancia distance, true para revertir distancia distance
+    const falla_completa = fallasCompletas();
+    const fallas_visitadas = FallasVisited();
+
+    const updateFallas = () => {
+        let updatedFallas = [];
+    
+        if (!checkBoxInfantil && !checkBoxMayor && !checkBoxVisitado) {
+            updatedFallas = falla_completa.filter(falla => !falla.visitado);
+        } else if (checkBoxInfantil && !checkBoxMayor && !checkBoxVisitado) {
+            updatedFallas = falla_completa.filter(falla => falla.tipo === "Infantil" && !falla.visitado);
+        } else if (!checkBoxInfantil && checkBoxMayor && !checkBoxVisitado) {
+            updatedFallas = falla_completa.filter(falla => falla.tipo === "Mayor" && !falla.visitado);
+        } else if (!checkBoxInfantil && !checkBoxMayor && checkBoxVisitado) {
+            updatedFallas = fallas_visitadas;
+        } else if (checkBoxInfantil && !checkBoxMayor && checkBoxVisitado) {
+            updatedFallas = fallas_visitadas.filter(falla => falla.tipo === "Infantil");
+        } else if (!checkBoxInfantil && checkBoxMayor && checkBoxVisitado) {
+            updatedFallas = fallas_visitadas.filter(falla => falla.tipo === "Mayor");
+        } else {
+            updatedFallas = falla_completa.filter(falla => !falla.visited);
+        }
+
+        if(section != "Todas"){
+            updatedFallas = updatedFallas.filter(falla => falla.seccion === section);
+        }
+
+        const filteredData = updatedFallas.filter(item => {
+            const propertiesToSearch = ["objectid", "id_falla", "nombre", "seccion", "fallera", "presidente", "artista", "lema", "tipo"];
+            return propertiesToSearch.some(property => {
+                const value = item[property];
+                return value && typeof value === 'string' && value.toLowerCase().includes(searchTerm.toLowerCase());
+            });
+        });
+    
+        
+        if(!order){
+            setSortedData([...filteredData].sort((a, b) => a.distancia - b.distancia));
+        } else {
+            setSortedData([...filteredData].sort((a, b) => b.distancia - a.distancia));
+        }
+    
+    };
 
     useEffect(() => {
         const loadDataAsync = async () => {
             await fallasCompletas();
             setIsLoading(false);
         };
-
         loadDataAsync();
     }, []);
 
+    useEffect(() => {
+        updateFallas();
+    }, [checkBoxInfantil, checkBoxMayor, checkBoxVisitado, searchTerm, order, toggleVisited, section]);
+    
     const loadMoreData = async () => {
         setPage(page + 1);
     };
@@ -44,20 +91,8 @@ const Lista_Fallas = ({ navigation }) => {
         );
     }
 
-
-    const fallas_Distancia = fallasCompletas();
-    const filteredData = fallas_Distancia.filter(item => {
-        const propertiesToSearch = ["objectid", "id_falla", "nombre", "seccion", "fallera", "presidente", "artista", "lema", "tipo"];
-        return propertiesToSearch.some(property => {
-            const value = item[property];
-            return value && typeof value === 'string' && value.toLowerCase().includes(searchTerm.toLowerCase());
-        });
-    });
-
-    const sortedData = filteredData.sort((a, b) => a.distancia - b.distancia);
-
     const renderItem = ({ item }) => (
-        <TouchableOpacity onPress={() => navigation.navigate('MainTabNavigator', { screen: 'Usuario' })}>
+        <TouchableOpacity onPress={() => navigation.navigate('MainTabNavigator', { screen: 'Usuario' }, console.log(item.seccion))}>
             <View style={styles.itemContainer}>
 
                 <Image style={styles.itemImage} source={{ uri: item.boceto }} />
@@ -128,7 +163,7 @@ const Lista_Fallas = ({ navigation }) => {
                         iconStyle={{ borderRadius: 5, }}
                         fillColor='#5470FF'
                         isChecked={checkBoxVisitado}
-                        text="No Visitado"
+                        text="Visitado"
                         disableBuiltInState
                         onPress={() => setCheckBoxVisitado(!checkBoxVisitado)}
                     />
@@ -136,14 +171,14 @@ const Lista_Fallas = ({ navigation }) => {
                     <View style={{ flexDirection: 'row', marginTop: 40, }}>
                         <Text style={{ marginBottom: 2, marginRight: 20, fontSize: 15 }}>Sección</Text>
                         <ModalDropdown style={[styles.buttonFilter, styles.shadowBoxFilter]} 
-                        options={['Todas', ...Secciones]}
+                        options={["Todas", ...Secciones]}
                         defaultIndex={0}
-                        defaultValue='Todas'
+                        defaultValue= {section}
                         textStyle={{fontWeight: 'bold', fontSize: 15}}
                         dropdownStyle={{padding: 10, height: 220}}
                         dropdownTextStyle={{fontSize: 15, color:'black'}}
                         dropdownTextHighlightStyle={{color:'#FF8C00'}}
-                        onSelect={(value) => setSection(value)}/>
+                        onSelect={(_, value) => setSection(value)}/>
                     </View>
 
 
