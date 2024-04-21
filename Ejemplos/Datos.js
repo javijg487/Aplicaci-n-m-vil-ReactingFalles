@@ -110,16 +110,9 @@ export const DatosProvider = ({ children }) => {
                     boceto: falla.boceto || "https://st2.depositphotos.com/1967477/6346/v/450/depositphotos_63462971-stock-illustration-sad-smiley-emoticon-cartoon.jpg"
                 }));
     
-                const seccionesSinRepetir = fallasConTipo.reduce((secciones, falla) => {
-                    if(!secciones.includes(falla.seccion) && falla.seccion != "Sección no disponible"){
-                        secciones.push(falla.seccion);
-                    }
-                    return secciones;
-                }, []);
-                
                 console.log("FallasMayor");
                 setFallas(fallasConTipo);
-                setSecciones(seccionesSinRepetir);
+                
             });
     }
     
@@ -203,9 +196,18 @@ export const DatosProvider = ({ children }) => {
             }
 
         });
+
+        const seccionesSinRepetir = combinedData.reduce((secciones, falla) => {
+            if(!secciones.includes(falla.seccion) && falla.seccion != "Sección no disponible"){
+                secciones.push(falla.seccion);
+            }
+            return secciones;
+        }, []);
+
         console.log("Distancias");
         setDistancia(nuevasDistancias);
         fallasCompletas();
+        setSecciones(seccionesSinRepetir);
     }
 
     const FallasVisited = () => {

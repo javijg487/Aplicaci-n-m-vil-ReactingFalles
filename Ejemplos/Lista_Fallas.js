@@ -26,7 +26,7 @@ const Lista_Fallas = ({ navigation }) => {
     const updateFallas = () => {
         let updatedFallas = [];
     
-        if (!checkBoxInfantil && !checkBoxMayor && !checkBoxVisitado) {
+        if ((!checkBoxInfantil && !checkBoxMayor && !checkBoxVisitado) || (checkBoxInfantil && checkBoxMayor && !checkBoxVisitado)) {
             updatedFallas = falla_completa.filter(falla => !falla.visitado);
         } else if (checkBoxInfantil && !checkBoxMayor && !checkBoxVisitado) {
             updatedFallas = falla_completa.filter(falla => falla.tipo === "Infantil" && !falla.visitado);
@@ -38,7 +38,8 @@ const Lista_Fallas = ({ navigation }) => {
             updatedFallas = fallas_visitadas.filter(falla => falla.tipo === "Infantil");
         } else if (!checkBoxInfantil && checkBoxMayor && checkBoxVisitado) {
             updatedFallas = fallas_visitadas.filter(falla => falla.tipo === "Mayor");
-        } else {
+        }
+        else {
             updatedFallas = falla_completa.filter(falla => !falla.visited);
         }
 
