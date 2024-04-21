@@ -9,38 +9,28 @@ import ModalDropdown from 'react-native-modal-dropdown';
 const Lista_Fallas = ({ navigation }) => {
     const { toggleVisited, fallasCompletas, Secciones, FallasVisited } = useContext(DatosContext);
     
-    const [checkBoxInfantil, setCheckBoxInfantil] = useState(true);
-    const [checkBoxMayor, setCheckBoxMayor] = useState(true);
-    const [checkBoxVisitado, setCheckBoxVisitado] = useState(true);
+    const [checkBoxInfantil, setCheckBoxInfantil] = useState(false);
+    const [checkBoxMayor, setCheckBoxMayor] = useState(false);
     const [ShowFilter, setShowFilter] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
     const [section, setSection] = useState('Todas');
     const [sortedData, setSortedData] = useState([]);
-    
-    const [order, setOrder] = useState(false); // false para distancia distance, true para revertir distancia distance
+    const [page, setPage] = useState(1);
+    const [order, setOrder] = useState("Cercanía"); // false para distancia distance, true para revertir distancia distance
     const falla_completa = fallasCompletas();
-    const fallas_visitadas = FallasVisited();
+    const filtroDistancia = ["Cercanía", "Lejanía"];
 
     const updateFallas = () => {
         let updatedFallas = [];
     
-        if ((!checkBoxInfantil && !checkBoxMayor && !checkBoxVisitado) || (checkBoxInfantil && checkBoxMayor && !checkBoxVisitado)) {
-            updatedFallas = falla_completa.filter(falla => !falla.visitado);
-        } else if (checkBoxInfantil && !checkBoxMayor && !checkBoxVisitado) {
-            updatedFallas = falla_completa.filter(falla => falla.tipo === "Infantil" && !falla.visitado);
-        } else if (!checkBoxInfantil && checkBoxMayor && !checkBoxVisitado) {
-            updatedFallas = falla_completa.filter(falla => falla.tipo === "Mayor" && !falla.visitado);
-        } else if (!checkBoxInfantil && !checkBoxMayor && checkBoxVisitado) {
-            updatedFallas = fallas_visitadas;
-        } else if (checkBoxInfantil && !checkBoxMayor && checkBoxVisitado) {
-            updatedFallas = fallas_visitadas.filter(falla => falla.tipo === "Infantil");
-        } else if (!checkBoxInfantil && checkBoxMayor && checkBoxVisitado) {
-            updatedFallas = fallas_visitadas.filter(falla => falla.tipo === "Mayor");
-        }
-        else {
-            updatedFallas = falla_completa.filter(falla => !falla.visited);
+        if ((!checkBoxInfantil && !checkBoxMayor) || (checkBoxInfantil && checkBoxMayor)) {
+            updatedFallas = falla_completa;
+        } else if (checkBoxInfantil && !checkBoxMayor) {
+            updatedFallas = falla_completa.filter(falla => falla.tipo === "Infantil");
+        } else if (!checkBoxInfantil && checkBoxMayor) {
+            updatedFallas = falla_completa.filter(falla => falla.tipo === "Mayor");
         }
 
         if(section != "Todas"){
@@ -56,7 +46,7 @@ const Lista_Fallas = ({ navigation }) => {
         });
     
         
-        if(!order){
+        if(order === "Cercanía"){
             setSortedData([...filteredData].sort((a, b) => a.distancia - b.distancia));
         } else {
             setSortedData([...filteredData].sort((a, b) => b.distancia - a.distancia));
@@ -74,7 +64,7 @@ const Lista_Fallas = ({ navigation }) => {
 
     useEffect(() => {
         updateFallas();
-    }, [checkBoxInfantil, checkBoxMayor, checkBoxVisitado, searchTerm, order, toggleVisited, section]);
+    }, [checkBoxInfantil, checkBoxMayor, searchTerm, order, toggleVisited, section]);
     
     const loadMoreData = async () => {
         setPage(page + 1);
@@ -157,17 +147,6 @@ const Lista_Fallas = ({ navigation }) => {
                         disableBuiltInState
                         onPress={() => setCheckBoxMayor(!checkBoxMayor)}
                     />
-                    <BouncyCheckbox
-                        style={{ marginTop: 16 }}
-                        textStyle={{ textDecorationLine: 'none', color: checkBoxVisitado ? "#1E1E1E" : "#747474" }}
-                        innerIconStyle={{ borderRadius: 5, }}
-                        iconStyle={{ borderRadius: 5, }}
-                        fillColor='#5470FF'
-                        isChecked={checkBoxVisitado}
-                        text="Visitado"
-                        disableBuiltInState
-                        onPress={() => setCheckBoxVisitado(!checkBoxVisitado)}
-                    />
 
                     <View style={{ flexDirection: 'row', marginTop: 40, }}>
                         <Text style={{ marginBottom: 2, marginRight: 20, fontSize: 15 }}>Sección</Text>
@@ -186,14 +165,14 @@ const Lista_Fallas = ({ navigation }) => {
                     <View style={{ marginVertical: 30, flexDirection: 'row' }}>
                         <Text style={{ marginRight: 20, fontSize: 15 }}>Ordenar</Text>
                         <ModalDropdown style={[styles.buttonFilter, styles.shadowBoxFilter]} 
-                        options={['Cercanía', 'Lejanía']}
+                        options={filtroDistancia}
                         defaultIndex={0}
-                        defaultValue='Cercanía'
+                        defaultValue={order}
                         textStyle={{fontWeight: 'bold', fontSize: 15}}
                         dropdownStyle={{padding: 10, height: 100}}
                         dropdownTextStyle={{fontSize: 15, color:'black'}}
                         dropdownTextHighlightStyle={{color:'#FF8C00'}}
-                        onSelect={(value) => setOrder(value)}/>
+                        onSelect={(_, value) => setOrder(value)}/>
                     </View>
                     <View
                         style={{
@@ -209,7 +188,7 @@ const Lista_Fallas = ({ navigation }) => {
                         <TouchableOpacity style={styles.buttonFilter} onPress={() => {
                             setCheckBoxInfantil(false);
                             setCheckBoxMayor(false);
-                            setCheckBoxVisitado(false);
+                            // setCheckBoxVisitado(false);
                             setShowFilter(false);
                             setModalVisible(!modalVisible);
 

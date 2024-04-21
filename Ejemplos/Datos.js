@@ -102,7 +102,7 @@ export const DatosProvider = ({ children }) => {
                     ...falla,
                     tipo: "Mayor",
                     nombre: falla.nombre || "Nombre no disponible",
-                    seccion: falla.seccion || "Sección no disponible",
+                    seccion: falla.seccion === "E" ? "Especial" : (falla.seccion || "Sección no disponible"),
                     fallera: falla.fallera || "Fallera no disponible",
                     presidente: falla.presidente || "Presidente no disponible",
                     artista: falla.artista || "Artista no disponible",
@@ -126,7 +126,7 @@ export const DatosProvider = ({ children }) => {
                     ...falla,
                     tipo: "Infantil",
                     nombre: falla.nombre || "Nombre no disponible",
-                    seccion: falla.seccion || "Sección no disponible",
+                    seccion: falla.seccion === "IE" ? "Inf. Especial" : (falla.seccion ? "Inf. " + falla.seccion : "Sección no disponible"),
                     fallera: falla.fallera || "Fallera no disponible",
                     presidente: falla.presidente || "Presidente no disponible",
                     artista: falla.artista || "Artista no disponible",
@@ -203,6 +203,8 @@ export const DatosProvider = ({ children }) => {
             }
             return secciones;
         }, []);
+
+        seccionesSinRepetir.sort();
 
         console.log("Distancias");
         setDistancia(nuevasDistancias);
