@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, TextInput, FlatList, ActivityIndicator, Modal } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ImageBackground, Image, TextInput, FlatList, ActivityIndicator, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { DatosContext } from './Datos';
 import LottieView from 'lottie-react-native';
@@ -8,23 +8,25 @@ import ModalDropdown from 'react-native-modal-dropdown';
 
 const Lista_Fallas = ({ navigation }) => {
     const { toggleVisited, fallasCompletas, Secciones, FallasVisited } = useContext(DatosContext);
-    
+
     const [checkBoxInfantil, setCheckBoxInfantil] = useState(false);
     const [checkBoxMayor, setCheckBoxMayor] = useState(false);
     const [ShowFilter, setShowFilter] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalFallaVisible, setmodalFallaVisible] = useState(false);
     const [section, setSection] = useState('Todas');
     const [sortedData, setSortedData] = useState([]);
     const [page, setPage] = useState(1);
     const [order, setOrder] = useState("Cercanía"); // false para distancia distance, true para revertir distancia distance
+    const [fallaDetalle, setfallaDetalle] = useState({});
     const falla_completa = fallasCompletas();
     const filtroDistancia = ["Cercanía", "Lejanía"];
 
     const updateFallas = () => {
         let updatedFallas = [];
-    
+
         if ((!checkBoxInfantil && !checkBoxMayor) || (checkBoxInfantil && checkBoxMayor)) {
             updatedFallas = falla_completa;
         } else if (checkBoxInfantil && !checkBoxMayor) {
@@ -33,7 +35,7 @@ const Lista_Fallas = ({ navigation }) => {
             updatedFallas = falla_completa.filter(falla => falla.tipo === "Mayor");
         }
 
-        if(section != "Todas"){
+        if (section != "Todas") {
             updatedFallas = updatedFallas.filter(falla => falla.seccion === section);
         }
 
@@ -44,14 +46,14 @@ const Lista_Fallas = ({ navigation }) => {
                 return value && typeof value === 'string' && value.toLowerCase().includes(searchTerm.toLowerCase());
             });
         });
-    
-        
-        if(order === "Cercanía"){
+
+
+        if (order === "Cercanía") {
             setSortedData([...filteredData].sort((a, b) => a.distancia - b.distancia));
         } else {
             setSortedData([...filteredData].sort((a, b) => b.distancia - a.distancia));
         }
-    
+
     };
 
     useEffect(() => {
@@ -65,7 +67,7 @@ const Lista_Fallas = ({ navigation }) => {
     useEffect(() => {
         updateFallas();
     }, [checkBoxInfantil, checkBoxMayor, searchTerm, order, toggleVisited, section]);
-    
+
     const loadMoreData = async () => {
         setPage(page + 1);
     };
@@ -83,7 +85,12 @@ const Lista_Fallas = ({ navigation }) => {
     }
 
     const renderItem = ({ item }) => (
-        <TouchableOpacity onPress={() => navigation.navigate('MainTabNavigator', { screen: 'Usuario' }, console.log(item.seccion))}>
+        // AQUI TENGO QUE AÑADIR EL SETMODALFALLAS A TRUE PARA QUE APAREZCA LA PANTALLA DE DETALLE
+        // Tengo que enviar el item como parámetro
+        <TouchableOpacity onPress={() => {
+            setmodalFallaVisible(!modalFallaVisible);
+            setfallaDetalle(item);
+        }}>
             <View style={styles.itemContainer}>
 
                 <Image style={styles.itemImage} source={{ uri: item.boceto }} />
@@ -100,6 +107,20 @@ const Lista_Fallas = ({ navigation }) => {
             </View>
         </TouchableOpacity>
     );
+
+    const renderFallaDetalle = ({ item }) => (
+        
+        <View>
+            <Text style={styles.detallesFallaTexto}>{item.nombre}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.seccion}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.tipo}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.presidente}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.lema}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.anyo_fundacion}</Text>
+            {/* Aquí puedes agregar los demás detalles que quieras mostrar */}
+        </View>
+    );
+    
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Lista de Fallas</Text>
@@ -150,29 +171,29 @@ const Lista_Fallas = ({ navigation }) => {
 
                     <View style={{ flexDirection: 'row', marginTop: 40, }}>
                         <Text style={{ marginBottom: 2, marginRight: 20, fontSize: 15 }}>Sección</Text>
-                        <ModalDropdown style={[styles.buttonFilter, styles.shadowBoxFilter]} 
-                        options={["Todas", ...Secciones]}
-                        defaultIndex={0}
-                        defaultValue= {section}
-                        textStyle={{fontWeight: 'bold', fontSize: 15}}
-                        dropdownStyle={{padding: 10, height: 220}}
-                        dropdownTextStyle={{fontSize: 15, color:'black'}}
-                        dropdownTextHighlightStyle={{color:'#FF8C00'}}
-                        onSelect={(_, value) => setSection(value)}/>
+                        <ModalDropdown style={[styles.buttonFilter, styles.shadowBoxFilter]}
+                            options={["Todas", ...Secciones]}
+                            defaultIndex={0}
+                            defaultValue={section}
+                            textStyle={{ fontWeight: 'bold', fontSize: 15 }}
+                            dropdownStyle={{ padding: 10, height: 220 }}
+                            dropdownTextStyle={{ fontSize: 15, color: 'black' }}
+                            dropdownTextHighlightStyle={{ color: '#FF8C00' }}
+                            onSelect={(_, value) => setSection(value)} />
                     </View>
 
 
                     <View style={{ marginVertical: 30, flexDirection: 'row' }}>
                         <Text style={{ marginRight: 20, fontSize: 15 }}>Ordenar</Text>
-                        <ModalDropdown style={[styles.buttonFilter, styles.shadowBoxFilter]} 
-                        options={filtroDistancia}
-                        defaultIndex={0}
-                        defaultValue={order}
-                        textStyle={{fontWeight: 'bold', fontSize: 15}}
-                        dropdownStyle={{padding: 10, height: 100}}
-                        dropdownTextStyle={{fontSize: 15, color:'black'}}
-                        dropdownTextHighlightStyle={{color:'#FF8C00'}}
-                        onSelect={(_, value) => setOrder(value)}/>
+                        <ModalDropdown style={[styles.buttonFilter, styles.shadowBoxFilter]}
+                            options={filtroDistancia}
+                            defaultIndex={0}
+                            defaultValue={order}
+                            textStyle={{ fontWeight: 'bold', fontSize: 15 }}
+                            dropdownStyle={{ padding: 10, height: 100 }}
+                            dropdownTextStyle={{ fontSize: 15, color: 'black' }}
+                            dropdownTextHighlightStyle={{ color: '#FF8C00' }}
+                            onSelect={(_, value) => setOrder(value)} />
                     </View>
                     <View
                         style={{
@@ -202,6 +223,36 @@ const Lista_Fallas = ({ navigation }) => {
                             <Text style={styles.buttonFilterText} >Aplicar</Text>
                         </TouchableOpacity>
                     </View>
+                </View>
+            </Modal>
+            <Modal animationType="slide" transparent={true} visible={modalFallaVisible} >
+                <View style={[styles.viewDetalleFalla, styles.shadowBoxDetalle]}>
+                    <View style={styles.shadowBoxImage}>
+                        <Image style={styles.image_style} source={{ uri: fallaDetalle.boceto }} />
+                    </View>
+                    <View style={styles.containerBotonesDetalles}>
+                        <TouchableOpacity style={styles.botonesDetalles} onPress={() => toggleVisited(fallaDetalle)}>
+                            <Ionicons name="star" color={fallaDetalle.visitado ? '#FF8C00' : "gray"} size={50} style={styles.iconDetalle} />
+                            <Text style={[styles.TextoBotonesDetalle, {marginLeft: -5}]}>VISITADO</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.botonesDetalles}>
+                            <Ionicons name="location" color={'gray'} size={50} style={styles.iconDetalle} />
+                            <Text style={styles.TextoBotonesDetalle}>MAPA</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.botonesDetalles}>
+                            <Ionicons name="share" color={'gray'} size={50} style={styles.iconDetalle} />
+                            <Text style={styles.TextoBotonesDetalle}>COMPARTIR</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.detallesFalla}>
+                    <FlatList
+                        data={[fallaDetalle]}
+                        renderItem={renderFallaDetalle}
+                        keyExtractor={(item) => item.objectid.toString()}/>
+                    </View>
+                    <TouchableOpacity style={styles.buttonDetalles} onPress={() => { setmodalFallaVisible(!modalFallaVisible) }}>
+                        <Text style={styles.botonVolver}>Volver</Text>
+                    </TouchableOpacity>
                 </View>
             </Modal>
 
@@ -313,6 +364,12 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 1,
     },
+    shadowBoxDetalle: {
+        shadowColor: '#1E1E1E',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+    },
     buttonSectionFilter: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
@@ -341,9 +398,72 @@ const styles = StyleSheet.create({
         right: 20,
 
     },
-
     modalStyle: {
         marginTop: 20
+    },
+    viewDetalleFalla: {
+        height: "75%",
+        width: "95%",
+        marginTop: "60%",
+        backgroundColor: "white",
+        alignSelf: 'center',
+        borderRadius: 20,
+        paddingHorizontal: 20,
+
+    },
+    image_style: {
+        width: 300,
+        height: 300,
+        borderRadius: 300 / 2,
+        alignSelf: "center",
+        marginTop: "-40%",
+        overflow: "hidden",
+        borderWidth: 5,
+        borderColor: "white",
+        backgroundColor:"lightgray"
+    },
+    shadowBoxImage: {
+        shadowColor: '#black',
+        shadowOffset: { width: 0, height: -1 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
+    },
+    containerBotonesDetalles: {
+        flexDirection: "row",
+        alignSelf: "center",
+        marginTop: 25
+    },
+    botonesDetalles: {
+        marginHorizontal: 20,
+    },
+    TextoBotonesDetalle: {
+        fontWeight: "bold",
+        textAlign: "center",
+        color: "#FF8C00"
+    },
+    iconDetalle: {
+        alignSelf: "center"
+    },
+    detallesFalla: {
+        marginLeft: 20,
+        marginTop: 40
+    },
+    detallesFallaTexto: {
+        fontWeight: "bold",
+        fontSize: 24,
+        marginBottom: 10
+    },
+    buttonDetalles: {
+        width: 100,
+        backgroundColor: "#FF8C00",
+        alignSelf: "center",
+        paddingVertical: 10,
+        borderRadius: 10,
+    },
+    botonVolver: {
+        fontWeight: "bold",
+        color: "white",
+        alignSelf: "center"
     }
 });
 
