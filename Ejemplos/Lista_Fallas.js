@@ -433,12 +433,11 @@ const styles = StyleSheet.create({
     viewDetalleFalla: {
         height: "75%",
         width: "95%",
-        marginTop: "40%",
         backgroundColor: "white",
         alignSelf: 'center',
         borderRadius: 20,
         paddingHorizontal: 20,
-        marginTop: 250
+        marginTop: "50%"
 
     },
     image_style: {
@@ -481,8 +480,8 @@ const styles = StyleSheet.create({
     },
     detallesFallaTexto: {
         fontWeight: "bold",
-        fontSize: 22,
-        marginBottom: 10
+        fontSize: 20,
+        marginBottom: 7
     },
     buttonDetalles: {
         width: 100,

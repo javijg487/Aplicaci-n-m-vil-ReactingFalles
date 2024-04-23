@@ -77,7 +77,7 @@ const Inicio = () => {
             }}
 
         >
-            {uniqueFallas.map((falla) => (
+            {fallas.map((falla) => (
                 <Marker
                     key={falla.objectid}
                     coordinate={{
@@ -85,8 +85,8 @@ const Inicio = () => {
                         longitude: falla.geo_point_2d.lon
                     }}
                     title={falla.nombre}
-                    description={falla.tipo}
-                    pinColor={falla.seccion === "Especial" ? 'green' : 'red'}
+                    description={falla.seccion}
+                    pinColor={falla.tipo === "Mayor" ? 'green' : 'red'}
                 />
             ))}
 
