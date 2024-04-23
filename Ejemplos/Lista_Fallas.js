@@ -120,6 +120,13 @@ const Lista_Fallas = ({ navigation }) => {
             {/* Aquí puedes agregar los demás detalles que quieras mostrar */}
         </View>
     );
+
+    const toggleVisitedDetalle = (detalle) => {
+        setfallaDetalle(prevFallaDetalle => ({
+            ...prevFallaDetalle,
+            visitado: !detalle.visitado 
+        }));
+    };
     
     return (
         <SafeAreaView style={styles.container}>
@@ -231,7 +238,7 @@ const Lista_Fallas = ({ navigation }) => {
                         <Image style={styles.image_style} source={{ uri: fallaDetalle.boceto }} />
                     </View>
                     <View style={styles.containerBotonesDetalles}>
-                        <TouchableOpacity style={styles.botonesDetalles} onPress={() => toggleVisited(fallaDetalle)}>
+                        <TouchableOpacity style={styles.botonesDetalles} onPress={() => {toggleVisited(fallaDetalle); toggleVisitedDetalle(fallaDetalle)}}>
                             <Ionicons name="star" color={fallaDetalle.visitado ? '#FF8C00' : "gray"} size={50} style={styles.iconDetalle} />
                             <Text style={[styles.TextoBotonesDetalle, {marginLeft: -5}]}>VISITADO</Text>
                         </TouchableOpacity>
@@ -402,9 +409,9 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     viewDetalleFalla: {
-        height: "75%",
+        height: "80%",
         width: "95%",
-        marginTop: "60%",
+        marginTop: "40%",
         backgroundColor: "white",
         alignSelf: 'center',
         borderRadius: 20,
@@ -442,15 +449,16 @@ const styles = StyleSheet.create({
         color: "#FF8C00"
     },
     iconDetalle: {
-        alignSelf: "center"
+        alignSelf: "center",
+        
     },
     detallesFalla: {
         marginLeft: 20,
-        marginTop: 40
+        marginTop: 10
     },
     detallesFallaTexto: {
         fontWeight: "bold",
-        fontSize: 24,
+        fontSize: 22,
         marginBottom: 10
     },
     buttonDetalles: {
