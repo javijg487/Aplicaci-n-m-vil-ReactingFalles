@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { CameraView, useCameraPermissions } from 'expo-camera/next';
-
-import { View, TouchableOpacity, Alert, StyleSheet, Text } from 'react-native';
+import { DatosContext } from './Datos';
+import { Ionicons } from '@expo/vector-icons';
+import { View, TouchableOpacity, Alert, StyleSheet, Text,Modal, Image, FlatList} from 'react-native';
 
 
 const Camara = () => {
@@ -10,7 +11,11 @@ const Camara = () => {
     const [scanned, setScanned] = useState(false);
     const [flash, setFlash] = useState('off');
     const [data, setData] = useState('');
-
+    const [modalFallaVisible, setmodalFallaVisible] = useState(false);
+    const { fallasCompletas, toggleVisited} = useContext(DatosContext);
+    const [fallaDetalle, setfallaDetalle] = useState({});
+    const falla_completa = fallasCompletas();
+    
     useEffect(() => {
         if (!alerta) {
             getCameraPermissions();
@@ -27,6 +32,17 @@ const Camara = () => {
             return;
         }
     };
+    const renderFallaDetalle = ({ item }) => (
+        
+        <View>
+            <Text style={styles.detallesFallaTexto}>{item.nombre}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.seccion}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.tipo}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.presidente}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.lema}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.anyo_fundacion}</Text>
+        </View>
+    );
 
     /*
     const concederPermiso = async () => {
@@ -51,7 +67,19 @@ const Camara = () => {
         setScanned(true);
         setData(Data)
         console.log("Data: " + Data)
-      };
+        const idFalla = JSON.stringify(data.data);
+        const fallaEncontrada = falla_completa.find(falla => falla.id_falla === idFalla);
+        if (fallaEncontrada) {
+            setmodalFallaVisible(!modalFallaVisible);
+            setfallaDetalle(fallaEncontrada);
+        }
+    };
+    const toggleVisitedDetalle = (detalle) => {
+        setfallaDetalle(prevFallaDetalle => ({
+            ...prevFallaDetalle,
+            visitado: !detalle.visitado
+        }));
+    };
 
     return (
         <View style={styles.container}>
@@ -65,11 +93,43 @@ const Camara = () => {
                     onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
                 >
                 </CameraView>
-            
+
             </View>
             <Text style={styles.maintext}>{JSON.stringify(data.data)}</Text>
             {scanned && <TouchableOpacity title={'Scan again?'} onPress={() => setScanned(false)} color='tomato'>
                 <Text>Scan again?</Text></TouchableOpacity>}
+
+
+            <Modal animationType="slide" transparent={true} visible={modalFallaVisible} >
+                <View style={[styles.viewDetalleFalla, styles.shadowBoxDetalle]}>
+                    <View style={styles.shadowBoxImage}>
+                        <Image style={styles.image_style} source={{ uri: fallaDetalle.boceto }} />
+                    </View>
+                    <View style={styles.containerBotonesDetalles}>
+                        <TouchableOpacity style={styles.botonesDetalles} onPress={() => { toggleVisited(fallaDetalle); toggleVisitedDetalle(fallaDetalle) }}>
+                            <Ionicons name="star" color={fallaDetalle.visitado ? '#FF8C00' : "gray"} size={50} style={styles.iconDetalle} />
+                            <Text style={[styles.TextoBotonesDetalle, { marginLeft: -5 }]}>VISITADO</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.botonesDetalles}>
+                            <Ionicons name="location" color={'gray'} size={50} style={styles.iconDetalle} />
+                            <Text style={styles.TextoBotonesDetalle}>MAPA</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.botonesDetalles}>
+                            <Ionicons name="share" color={'gray'} size={50} style={styles.iconDetalle} />
+                            <Text style={styles.TextoBotonesDetalle}>COMPARTIR</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.detallesFalla}>
+                        <FlatList
+                            data={[fallaDetalle]}
+                            renderItem={renderFallaDetalle}
+                            keyExtractor={(item) => item.objectid.toString()} />
+                    </View>
+                    <TouchableOpacity style={styles.buttonDetalles} onPress={() => { setmodalFallaVisible(!modalFallaVisible) }}>
+                        <Text style={styles.botonVolver}>Volver</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -93,10 +153,70 @@ const styles = StyleSheet.create({
         fontSize: 16,
         margin: 20,
     },
-camera: {
+    camera: {
         height: 400,
         width: 400,
 
+    },
+    viewDetalleFalla: {
+        height: "75%",
+        width: "95%",
+        backgroundColor: "white",
+        alignSelf: 'center',
+        borderRadius: 20,
+        paddingHorizontal: 20,
+        marginTop: "50%"
+
+    },
+    shadowBoxDetalle: {
+        shadowColor: '#1E1E1E',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+    },
+    shadowBoxImage: {
+        shadowColor: '#black',
+        shadowOffset: { width: 0, height: -1 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
+    },
+    containerBotonesDetalles: {
+        flexDirection: "row",
+        alignSelf: "center",
+        marginTop: 25
+    },
+    botonesDetalles: {
+        marginHorizontal: 20,
+    },
+    TextoBotonesDetalle: {
+        fontWeight: "bold",
+        textAlign: "center",
+        color: "#FF8C00"
+    },
+    iconDetalle: {
+        alignSelf: "center",
+
+    },
+    detallesFalla: {
+        marginLeft: 20,
+        marginTop: 10
+    },
+    detallesFallaTexto: {
+        fontWeight: "bold",
+        fontSize: 20,
+        marginBottom: 7
+    },
+    buttonDetalles: {
+        width: 100,
+        backgroundColor: "#FF8C00",
+        alignSelf: "center",
+        paddingVertical: 10,
+        borderRadius: 10,
+    },
+    botonVolver: {
+        fontWeight: "bold",
+        color: "white",
+        alignSelf: "center"
     }
 });
 export default Camara;
