@@ -7,8 +7,18 @@ import { DatosContext } from './Datos';
 
 
 const Inicio = () => {
-    const { combinedData, calcularDistancia } = useContext(DatosContext);
+    const { fallasCompletas, calcularDistancia } = useContext(DatosContext);
     const mapView = React.useRef(null);
+    const [fallas, setFallas] = useState([]);
+
+    useEffect(() => {
+        const loadFallas = async () => {
+            const fallasData = await fallasCompletas();
+            setFallas(fallasData);
+        };
+
+        loadFallas();
+    }, [fallasCompletas]);
 
     useEffect(() => {
 
@@ -42,6 +52,13 @@ const Inicio = () => {
         await requestLocationPermission();
         getCurrentLocation();
     };
+    
+    const uniqueFallas = fallas.reduce((acc, current) => {
+        if (!acc.find(item => item.nombre === current.nombre)) {
+            acc.push(current);
+        }
+        return acc;
+    }, []);
 
     
 
@@ -60,7 +77,7 @@ const Inicio = () => {
             }}
 
         >
-            {combinedData.map((falla) => (
+            {uniqueFallas.map((falla) => (
                 <Marker
                     key={falla.objectid}
                     coordinate={{
@@ -69,7 +86,7 @@ const Inicio = () => {
                     }}
                     title={falla.nombre}
                     description={falla.tipo}
-                    pinColor={falla.tipo === "Mayor" ? 'red' : 'green'}
+                    pinColor={falla.seccion === "Especial" ? 'green' : 'red'}
                 />
             ))}
 
