@@ -11,6 +11,7 @@ const Lista_Fallas = ({ navigation }) => {
 
     const [checkBoxInfantil, setCheckBoxInfantil] = useState(false);
     const [checkBoxMayor, setCheckBoxMayor] = useState(false);
+    const [checkBoxVisitado, setCheckBoxVisitado] = useState(false);
     const [ShowFilter, setShowFilter] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -22,17 +23,26 @@ const Lista_Fallas = ({ navigation }) => {
     const [order, setOrder] = useState("Cercanía"); // false para distancia distance, true para revertir distancia distance
     const [fallaDetalle, setfallaDetalle] = useState({});
     const falla_completa = fallasCompletas();
-    const filtroDistancia = ["Cercanía", "Lejanía"];
+    const fallas_visitadas = FallasVisited();
+    const filtroDistancia = ["Cercanía", "Lejanía", "A-Z"];
 
     const updateFallas = () => {
         let updatedFallas = [];
 
-        if ((!checkBoxInfantil && !checkBoxMayor) || (checkBoxInfantil && checkBoxMayor)) {
+        if ((!checkBoxInfantil && !checkBoxMayor && !checkBoxVisitado) || (checkBoxInfantil && checkBoxMayor && checkBoxVisitado)) {
             updatedFallas = falla_completa;
-        } else if (checkBoxInfantil && !checkBoxMayor) {
+        } else if (checkBoxInfantil && !checkBoxMayor && !checkBoxVisitado) {
             updatedFallas = falla_completa.filter(falla => falla.tipo === "Infantil");
-        } else if (!checkBoxInfantil && checkBoxMayor) {
+        } else if (!checkBoxInfantil && checkBoxMayor && !checkBoxVisitado) {
             updatedFallas = falla_completa.filter(falla => falla.tipo === "Mayor");
+        } else if (!checkBoxInfantil && !checkBoxMayor && checkBoxVisitado) {
+            updatedFallas = fallas_visitadas;
+        } else if (checkBoxInfantil && !checkBoxMayor && checkBoxVisitado) {
+            updatedFallas = fallas_visitadas.filter(falla => falla.tipo === "Infantil");
+        } else if (!checkBoxInfantil && checkBoxMayor && checkBoxVisitado) {
+            updatedFallas = fallas_visitadas.filter(falla => falla.tipo === "Mayor");
+        } else {
+            updatedFallas = fallas_visitadas;
         }
 
         if (section != "Todas") {
@@ -50,8 +60,10 @@ const Lista_Fallas = ({ navigation }) => {
 
         if (order === "Cercanía") {
             setSortedData([...filteredData].sort((a, b) => a.distancia - b.distancia));
-        } else {
+        } else if(order === "Lejanía") {
             setSortedData([...filteredData].sort((a, b) => b.distancia - a.distancia));
+        }else{
+            setSortedData([...filteredData].sort((a, b) => a.nombre.localeCompare(b.nombre)));
         }
 
     };
@@ -66,7 +78,7 @@ const Lista_Fallas = ({ navigation }) => {
 
     useEffect(() => {
         updateFallas();
-    }, [checkBoxInfantil, checkBoxMayor, searchTerm, order, toggleVisited, section]);
+    }, [checkBoxInfantil, checkBoxMayor, checkBoxVisitado, searchTerm, order, toggleVisited, section]);
 
     const loadMoreData = async () => {
         setPage(page + 1);
@@ -117,7 +129,6 @@ const Lista_Fallas = ({ navigation }) => {
             <Text style={styles.detallesFallaTexto}>{item.presidente}</Text>
             <Text style={styles.detallesFallaTexto}>{item.lema}</Text>
             <Text style={styles.detallesFallaTexto}>{item.anyo_fundacion}</Text>
-            {/* Aquí puedes agregar los demás detalles que quieras mostrar */}
         </View>
     );
 
@@ -174,6 +185,17 @@ const Lista_Fallas = ({ navigation }) => {
                         text="Falla Mayor"
                         disableBuiltInState
                         onPress={() => setCheckBoxMayor(!checkBoxMayor)}
+                    />
+                    <BouncyCheckbox
+                        style={{ marginTop: 16 }}
+                        textStyle={{ textDecorationLine: 'none', color: checkBoxVisitado ? "#1E1E1E" : "#747474" }}
+                        innerIconStyle={{ borderRadius: 5, }}
+                        iconStyle={{ borderRadius: 5, }}
+                        fillColor='#5470FF'
+                        isChecked={checkBoxVisitado}
+                        text="Visitadas"
+                        disableBuiltInState
+                        onPress={() => setCheckBoxVisitado(!checkBoxVisitado)}
                     />
 
                     <View style={{ flexDirection: 'row', marginTop: 40, }}>
@@ -409,13 +431,14 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     viewDetalleFalla: {
-        height: "80%",
+        height: "75%",
         width: "95%",
         marginTop: "40%",
         backgroundColor: "white",
         alignSelf: 'center',
         borderRadius: 20,
         paddingHorizontal: 20,
+        marginTop: 250
 
     },
     image_style: {

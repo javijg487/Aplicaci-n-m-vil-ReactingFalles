@@ -12,7 +12,7 @@ const Visitado = ({ navigation }) => {
     const [checkBoxMayor, setCheckBoxMayor] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
-    const [order, setOrder] = useState(false); // false para distancia distance, true para revertir distancia distance
+    const [order, setOrder] = useState('Cercanía'); // false para distancia distance, true para revertir distancia distance
     const [section, setSection] = useState('Todas');
     const [sortedData, setSortedData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -52,10 +52,12 @@ const Visitado = ({ navigation }) => {
             });
         });
 
-        if(!order){
+        if (order === "Cercanía") {
             setSortedData([...filteredData].sort((a, b) => a.distancia - b.distancia));
-        } else {
+        } else if(order === "Lejanía") {
             setSortedData([...filteredData].sort((a, b) => b.distancia - a.distancia));
+        }else{
+            setSortedData([...filteredData].sort((a, b) => a.nombre.localeCompare(b.nombre)));
         }
 
     };
@@ -177,14 +179,14 @@ const Visitado = ({ navigation }) => {
                     <View style={{ marginVertical: 30, flexDirection: 'row' }}>
                         <Text style={{ marginRight: 20, fontSize: 15 }}>Ordenar</Text>
                         <ModalDropdown style={[styles.buttonFilter, styles.shadowBoxFilter]} 
-                        options={['Cercanía', 'Lejanía']}
+                        options={["Cercanía", "Lejanía", "A-Z"]}
                         defaultIndex={0}
                         defaultValue='Cercanía'
                         textStyle={{fontWeight: 'bold', fontSize: 15}}
                         dropdownStyle={{padding: 10, height: 100}}
                         dropdownTextStyle={{fontSize: 15, color:'black'}}
                         dropdownTextHighlightStyle={{color:'#FF8C00'}}
-                        onSelect={(value) => setOrder(value)}/>
+                        onSelect={(_, value) => setOrder(value)}/>
                     </View>
                     <View
                         style={{
