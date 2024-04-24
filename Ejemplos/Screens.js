@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { StyleSheet, Alert, View, Text, Image } from 'react-native';
+import { StyleSheet, Alert, View, Text, Image,TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import Acceder from './Acceder';
 import Login from './Login';
 import Camara from './Camara';
@@ -51,7 +52,25 @@ function MyStack() {
                 <Stack.Screen name="Acceder" component={Acceder} options={{ headerShown: false }} />
                 <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
                 <Stack.Screen name="MainTabNavigator" component={MainTabNavigator} options={{ headerShown: false }} />
-                <Stack.Screen name="Camara" component={Camara} options={{ headerShown: false }} />
+                <Stack.Screen 
+    name="Camara" 
+    component={Camara} 
+    options={({ navigation }) => ({  
+        headerShown: true,
+        headerTransparent: true,
+        headerTitle:"Cámara",
+        headerTitleStyle: {
+            fontSize: 20, 
+            color: 'white', 
+        },
+        headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                <Ionicons name="arrow-back-circle" size={45} color="white"  /> 
+                            </TouchableOpacity>
+        ),
+    })} 
+/>
+
             </Stack.Navigator>
         </NavigationContainer>
     );
@@ -76,6 +95,9 @@ const styles = StyleSheet.create({
         marginTop: 500,
         fontSize: 20,
         fontWeight: 'bold',
+    },
+    backButton: {
+        marginLeft: 20,
     },
 });
 

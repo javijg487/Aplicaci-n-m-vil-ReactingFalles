@@ -16,10 +16,11 @@ const Camara = () => {
     const [fallaDetalle, setfallaDetalle] = useState({});
     const falla_completa = fallasCompletas();
     
+    
     useEffect(() => {
         if (!alerta) {
             getCameraPermissions();
-            console.log('Permios');
+            console.log('Permisos');
         }
     }, [alerta]);
 
@@ -67,12 +68,16 @@ const Camara = () => {
         setScanned(true);
         setData(Data)
         console.log("Data: " + Data)
-        const idFalla = JSON.stringify(data.data);
+        const idFalla = parseInt(Data.data);
+        console.log("ID: " + idFalla);
         const fallaEncontrada = falla_completa.find(falla => falla.id_falla === idFalla);
         if (fallaEncontrada) {
+            console.log("Falla encontrada: " + fallaEncontrada.nombre);
             setmodalFallaVisible(!modalFallaVisible);
             setfallaDetalle(fallaEncontrada);
-        }
+        }else(
+            console.log("Falla no encontrada")
+        )
     };
     const toggleVisitedDetalle = (detalle) => {
         setfallaDetalle(prevFallaDetalle => ({
@@ -95,9 +100,6 @@ const Camara = () => {
                 </CameraView>
 
             </View>
-            <Text style={styles.maintext}>{JSON.stringify(data.data)}</Text>
-            {scanned && <TouchableOpacity title={'Scan again?'} onPress={() => setScanned(false)} color='tomato'>
-                <Text>Scan again?</Text></TouchableOpacity>}
 
 
             <Modal animationType="slide" transparent={true} visible={modalFallaVisible} >
@@ -125,7 +127,7 @@ const Camara = () => {
                             renderItem={renderFallaDetalle}
                             keyExtractor={(item) => item.objectid.toString()} />
                     </View>
-                    <TouchableOpacity style={styles.buttonDetalles} onPress={() => { setmodalFallaVisible(!modalFallaVisible) }}>
+                    <TouchableOpacity style={styles.buttonDetalles} onPress={() => { setmodalFallaVisible(!modalFallaVisible); setScanned(false) }}>
                         <Text style={styles.botonVolver}>Volver</Text>
                     </TouchableOpacity>
                 </View>
@@ -144,18 +146,18 @@ const styles = StyleSheet.create({
     barcodebox: {
         alignItems: 'center',
         justifyContent: 'center',
-        height: 300,
-        width: 300,
+        height: '100%',
+        width: '100%',
         overflow: 'hidden',
-        borderRadius: 30,
+        
     },
     maintext: {
         fontSize: 16,
         margin: 20,
     },
     camera: {
-        height: 400,
-        width: 400,
+        height: "100%",
+        width: "100%",
 
     },
     viewDetalleFalla: {
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
     },
     shadowBoxImage: {
-        shadowColor: '#black',
+        shadowColor: 'black',
         shadowOffset: { width: 0, height: -1 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
@@ -217,6 +219,17 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "white",
         alignSelf: "center"
-    }
+    },
+    image_style: {
+        width: 300,
+        height: 300,
+        borderRadius: 300 / 2,
+        alignSelf: "center",
+        marginTop: "-40%",
+        overflow: "hidden",
+        borderWidth: 5,
+        borderColor: "white",
+        backgroundColor:"lightgray"
+    },
 });
 export default Camara;
