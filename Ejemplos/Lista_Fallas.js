@@ -5,6 +5,7 @@ import { DatosContext } from './Datos';
 import LottieView from 'lottie-react-native';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import ModalDropdown from 'react-native-modal-dropdown';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const Lista_Fallas = ({ navigation }) => {
     const { toggleVisited, fallasCompletas, Secciones, FallasVisited } = useContext(DatosContext);
@@ -120,25 +121,28 @@ const Lista_Fallas = ({ navigation }) => {
     }
 
     const renderItem = ({ item }) => (
-        // AQUI TENGO QUE AÑADIR EL SETMODALFALLAS A TRUE PARA QUE APAREZCA LA PANTALLA DE DETALLE
-        // Tengo que enviar el item como parámetro
         <TouchableOpacity onPress={() => {
             setmodalFallaVisible(!modalFallaVisible);
             setfallaDetalle(item);
         }}>
-            <View style={styles.itemContainer}>
+            <View>
+            <LinearGradient 
+            colors={['#FBAB7E', '#F7CE68']}
+            start={{ x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            style={styles.itemContainer}>
+                    <Image style={styles.itemImage} source={{ uri: item.boceto }} />
 
-                <Image style={styles.itemImage} source={{ uri: item.boceto }} />
-
-                <View>
-                    <Text style={styles.textItem}>{item.nombre}</Text>
-                    <Text>{item.tipo} - {item.seccion}</Text>
-                    <Text>Distancia: {item.distancia} Km</Text>
-                </View>
-                <TouchableOpacity style={styles.flagButton} onPress={() => toggleVisited(item)}>
-                    <Ionicons name="star" color={item.visitado ? '#FF8C00' : 'gray'} size={50} />
-                    {/* <Ionicons name="flag" color={item.visitado ? '#FF8C00' : 'gray'} size={50} /> */}
-                </TouchableOpacity>
+                    <View>
+                        <Text style={styles.textItem}>{item.nombre}</Text>
+                        <Text>{item.tipo} - {item.seccion}</Text>
+                        <Text>Distancia: {item.distancia} Km</Text>
+                    </View>
+                    <TouchableOpacity style={styles.flagButton} onPress={() => toggleVisited(item)}>
+                        <Ionicons name="star" color={item.visitado ? '#FF8C00' : 'gray'} size={50} />
+                        {/* <Ionicons name="flag" color={item.visitado ? '#FF8C00' : 'gray'} size={50} /> */}
+                    </TouchableOpacity>
+                </LinearGradient>
             </View>
         </TouchableOpacity>
     );
