@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { CameraView, useCameraPermissions } from 'expo-camera/next';
 import { DatosContext } from './Datos';
 import { Ionicons } from '@expo/vector-icons';
-import { View, TouchableOpacity, Alert, StyleSheet, Text,Modal, Image, FlatList} from 'react-native';
+import { View, TouchableOpacity, Alert, StyleSheet, Text,Modal, Image, FlatList,Share} from 'react-native';
 
 
 const Camara = () => {
@@ -63,6 +63,27 @@ const Camara = () => {
             visitado: !detalle.visitado
         }));
     };
+    const onShare = async () => {
+        try
+         {
+             const result = await Share.share({
+                 message: ("¿Has visto esta Falla? Te la recomiendo!" + "\n" + "Se llama " + "*"+fallaDetalle.nombre+"*" + "\n" + "Y aquí puede ver su boceto!" + "\n" + fallaDetalle.boceto)
+             });
+ 
+             if (result.action === Share.sharedAction){
+                 if(result.activityType){
+                     console.log("Compartida con tipo: ", result.activityType);
+                 }else{
+                     console.log("Compartido");
+                 }
+             }
+             else if(result.action === Share.dismissedAction){
+                 console.log("No compartido")
+             }
+         }catch(error){
+             console.log(error.message);
+         }
+    };
 
     return (
         <View style={styles.container}>
@@ -90,7 +111,7 @@ const Camara = () => {
                             <Text style={[styles.TextoBotonesDetalle, { marginLeft: -5 }]}>VISITADO</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.botonesDetalles}>
-                            <Ionicons name="share" color={'gray'} size={50} style={styles.iconDetalle} />
+                            <Ionicons name="share" color={'gray'} size={50} style={styles.iconDetalle} onPress={onShare}/>
                             <Text style={styles.TextoBotonesDetalle}>COMPARTIR</Text>
                         </TouchableOpacity>
                     </View>
