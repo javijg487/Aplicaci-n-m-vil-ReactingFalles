@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ImageBackground, Image, TextInput, FlatList, ActivityIndicator, Modal } from 'react-native';
+import { StyleSheet, Text, View, Share, SafeAreaView, TouchableOpacity, ImageBackground, Image, TextInput, FlatList, ActivityIndicator, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { DatosContext } from './Datos';
 import LottieView from 'lottie-react-native';
@@ -83,6 +83,29 @@ const Lista_Fallas = ({ navigation }) => {
     const loadMoreData = async () => {
         setPage(page + 1);
     };
+
+    const onShare = async () => {
+        try
+         {
+             const result = await Share.share({
+                 message: ("¿Has visto esta Falla? Te la recomiendo!" + "\n" + "Se llama " + "*"+fallaDetalle.nombre+"*" + "\n" + "Y aquí puede ver su boceto!" + "\n" + fallaDetalle.boceto)
+             });
+ 
+             if (result.action === Share.sharedAction){
+                 if(result.activityType){
+                     console.log("Compartida con tipo: ", result.activityType);
+                 }else{
+                     console.log("Compartido");
+                 }
+             }
+             else if(result.action === Share.dismissedAction){
+                 console.log("No compartido")
+             }
+         }catch(error){
+             console.log(error.message);
+         }
+     }
+ 
 
     if (isLoading) {
         return (
@@ -268,7 +291,7 @@ const Lista_Fallas = ({ navigation }) => {
                             <Ionicons name="location" color={'gray'} size={50} style={styles.iconDetalle} />
                             <Text style={styles.TextoBotonesDetalle}>MAPA</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.botonesDetalles}>
+                        <TouchableOpacity style={styles.botonesDetalles} onPress={onShare}>
                             <Ionicons name="share" color={'gray'} size={50} style={styles.iconDetalle} />
                             <Text style={styles.TextoBotonesDetalle}>COMPARTIR</Text>
                         </TouchableOpacity>

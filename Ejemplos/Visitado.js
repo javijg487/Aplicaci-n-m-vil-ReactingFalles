@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { StyleSheet, Modal, Text, View, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, Modal, Text, View, Share, TouchableOpacity, FlatList, Image, TextInput, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { DatosContext } from './Datos';
 import LottieView from 'lottie-react-native';
@@ -16,7 +16,9 @@ const Visitado = ({ navigation }) => {
     const [section, setSection] = useState('Todas');
     const [sortedData, setSortedData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [modalFallaVisible, setmodalFallaVisible] = useState(false);
     const Fallas_Visitadas = FallasVisited();
+    const [fallaDetalle, setfallaDetalle] = useState({});
 
     useEffect(() => {
         const loadDataAsync = async () => {
@@ -66,6 +68,27 @@ const Visitado = ({ navigation }) => {
         updateFallas();
     }, [checkBoxInfantil, checkBoxMayor, searchTerm, order, toggleVisited, section])
     
+    const onShare = async () => {
+        try
+         {
+             const result = await Share.share({
+                 message: ("¿Has visto esta Falla? Te la recomiendo!" + "\n" + "Se llama " + "*"+fallaDetalle.nombre+"*" + "\n" + "Y aquí puede ver su boceto!" + "\n" + fallaDetalle.boceto)
+             });
+ 
+             if (result.action === Share.sharedAction){
+                 if(result.activityType){
+                     console.log("Compartida con tipo: ", result.activityType);
+                 }else{
+                     console.log("Compartido");
+                 }
+             }
+             else if(result.action === Share.dismissedAction){
+                 console.log("No compartido")
+             }
+         }catch(error){
+             console.log(error.message);
+         }
+     }
     
     if (isLoading) {
 
@@ -79,6 +102,19 @@ const Visitado = ({ navigation }) => {
             </View>
         );
     }
+
+    const renderFallaDetalle = ({ item }) => (
+        
+        <View>
+            <Text style={styles.detallesFallaTexto}>{item.nombre}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.seccion}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.tipo}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.presidente}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.lema}</Text>
+            <Text style={styles.detallesFallaTexto}>{item.anyo_fundacion}</Text>
+        </View>
+    );
+
     //const distanceData = filteredData.sort((a, b) => a.distancia - b.distancia);
     return (
         <View style={styles.container}>
@@ -113,7 +149,9 @@ const Visitado = ({ navigation }) => {
                 {
                     sortedData.map((item) => {
                         return (
-                            <TouchableOpacity key={item.objectid} onPress={() => toggleVisited(item)}>
+                            <TouchableOpacity key={item.objectid} onPress={() => {
+                                setmodalFallaVisible(!modalFallaVisible);
+                                setfallaDetalle(item)}}>
                                 <View style={styles.itemContainer}>
 
                                     <Image
@@ -216,6 +254,36 @@ const Visitado = ({ navigation }) => {
                     </View>
                 </View>
             </Modal>
+            <Modal animationType="slide" transparent={true} visible={modalFallaVisible} >
+                <View style={[styles.viewDetalleFalla, styles.shadowBoxDetalle]}>
+                    <View style={styles.shadowBoxImage}>
+                        <Image style={styles.image_style} source={{ uri: fallaDetalle.boceto }} />
+                    </View>
+                    <View style={styles.containerBotonesDetalles}>
+                        <TouchableOpacity style={styles.botonesDetalles} onPress={() => { toggleVisited(fallaDetalle); toggleVisitedDetalle(fallaDetalle) }}>
+                            <Ionicons name="star" color={fallaDetalle.visitado ? '#FF8C00' : "gray"} size={50} style={styles.iconDetalle} />
+                            <Text style={[styles.TextoBotonesDetalle, { marginLeft: -5 }]}>VISITADO</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.botonesDetalles}>
+                            <Ionicons name="location" color={'gray'} size={50} style={styles.iconDetalle} />
+                            <Text style={styles.TextoBotonesDetalle}>MAPA</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.botonesDetalles} onPress={onShare}>
+                            <Ionicons name="share" color={'gray'} size={50} style={styles.iconDetalle} />
+                            <Text style={styles.TextoBotonesDetalle}>COMPARTIR</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.detallesFalla}>
+                        <FlatList
+                            data={[fallaDetalle]}
+                            renderItem={renderFallaDetalle}
+                            keyExtractor={(item) => item.objectid.toString()} />
+                    </View>
+                    <TouchableOpacity style={styles.buttonDetalles} onPress={() => setmodalFallaVisible(!modalFallaVisible)}>
+                        <Text style={styles.botonVolver}>Volver</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -315,6 +383,12 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 1,
     },
+    shadowBoxDetalle: {
+        shadowColor: '#1E1E1E',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+    },
     buttonSectionFilter: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
@@ -346,6 +420,71 @@ const styles = StyleSheet.create({
 
     modalStyle: {
         marginTop: 20
+    },
+    viewDetalleFalla: {
+        height: "75%",
+        width: "95%",
+        backgroundColor: "white",
+        alignSelf: 'center',
+        borderRadius: 20,
+        paddingHorizontal: 20,
+        marginTop: "50%"
+
+    },
+    image_style: {
+        width: 300,
+        height: 300,
+        borderRadius: 300 / 2,
+        alignSelf: "center",
+        marginTop: "-40%",
+        overflow: "hidden",
+        borderWidth: 5,
+        borderColor: "white",
+        backgroundColor:"lightgray"
+    },
+    shadowBoxImage: {
+        shadowColor: '#black',
+        shadowOffset: { width: 0, height: -1 },
+        shadowOpacity: 0.5,
+        shadowRadius: 2,
+    },
+    containerBotonesDetalles: {
+        flexDirection: "row",
+        alignSelf: "center",
+        marginTop: 25
+    },
+    botonesDetalles: {
+        marginHorizontal: 20,
+    },
+    TextoBotonesDetalle: {
+        fontWeight: "bold",
+        textAlign: "center",
+        color: "#FF8C00"
+    },
+    iconDetalle: {
+        alignSelf: "center",
+        
+    },
+    detallesFalla: {
+        marginLeft: 20,
+        marginTop: 10
+    },
+    detallesFallaTexto: {
+        fontWeight: "bold",
+        fontSize: 20,
+        marginBottom: 7
+    },
+    buttonDetalles: {
+        width: 100,
+        backgroundColor: "#FF8C00",
+        alignSelf: "center",
+        paddingVertical: 10,
+        borderRadius: 10,
+    },
+    botonVolver: {
+        fontWeight: "bold",
+        color: "white",
+        alignSelf: "center"
     }
 });
 
