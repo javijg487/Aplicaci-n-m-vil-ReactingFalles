@@ -163,9 +163,11 @@ const Visitado = ({ navigation }) => {
                                         <Text style={styles.textItem}>{item.nombre}</Text>
                                         <Text>{item.tipo} - {item.seccion}</Text>
                                         <Text>Distancia: {item.distancia} Km</Text>
+                                        <Text>Visitado: {item.visitadoFecha}</Text>
                                     </View>
                                     <TouchableOpacity style={styles.flagButton} onPress={() => toggleVisited(item)}>
                                         <Ionicons name="star" color={item.visitado ? '#FF8C00' : 'gray'} size={50} />
+                                        
                                     </TouchableOpacity>
                                 </View>
                             </TouchableOpacity>

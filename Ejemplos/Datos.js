@@ -167,9 +167,13 @@ export const DatosProvider = ({ children }) => {
         const index = Distancia.findIndex(item => item.objectid === falla.objectid); //Sino encuentra el objeto, devuelve -1
         if (index !== -1) {
             const updatedData = [...Distancia];
+            const tiempoTranscurrido = Date.now();
+            const tiempo = new Date(tiempoTranscurrido);
+            console.log("Fecha: " + tiempo.toLocaleString());
             updatedData[index] = {
                 ...updatedData[index],
-                visitado: !updatedData[index].visitado
+                visitado: !updatedData[index].visitado,
+                visitadoFecha: tiempo.toLocaleString()
             };
             if (updatedData[index].visitado === true) {
                 saveVisited(falla.objectid);
