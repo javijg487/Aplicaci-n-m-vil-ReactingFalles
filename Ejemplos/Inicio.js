@@ -87,6 +87,21 @@ const Inicio = () => {
             visitado: !detalle.visitado
         }));
     };
+    
+    const elegirImage = (falla) => {
+    let imageFalla ;
+
+    if(falla.tipo === "Mayor"&& falla.seccion!="Especial"){
+        imageFalla = require('../assets/fire.png');
+    }else if(falla.tipo === "Infantil"&& falla.seccion!="Inf. Especial"){
+        imageFalla = require('../assets/fire_green.png');
+    }else if(falla.seccion==="Especial"){
+        imageFalla = require('../assets/fire_blue.png');
+    }else if(falla.seccion==="Inf. Especial"){
+        imageFalla = require('../assets/fire_pink.png');
+    }
+    return imageFalla;
+    }
 
 
     return (
@@ -114,7 +129,9 @@ const Inicio = () => {
                         }}
                         onPress={() => handlefallaDetalle(falla)}
                         pinColor={falla.tipo === "Mayor" ? 'green' : 'red'}
-                    />
+                    >
+                        <Image source={elegirImage(falla)} style={{height: 40, width:40 }} />
+                    </Marker>
                 ))}
             </MapView>
             <Modal animationType="slide" transparent={true} visible={modalFallaVisible} >
