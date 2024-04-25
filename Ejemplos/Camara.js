@@ -113,10 +113,6 @@ const Camara = () => {
                             <Text style={[styles.TextoBotonesDetalle, { marginLeft: -5 }]}>VISITADO</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.botonesDetalles}>
-                            <Ionicons name="location" color={'gray'} size={50} style={styles.iconDetalle} />
-                            <Text style={styles.TextoBotonesDetalle}>MAPA</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.botonesDetalles}>
                             <Ionicons name="share" color={'gray'} size={50} style={styles.iconDetalle} />
                             <Text style={styles.TextoBotonesDetalle}>COMPARTIR</Text>
                         </TouchableOpacity>
