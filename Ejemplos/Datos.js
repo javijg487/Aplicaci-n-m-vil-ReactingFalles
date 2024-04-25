@@ -65,9 +65,13 @@ export const DatosProvider = ({ children }) => {
 
     const saveVisited = async (objectid) => {
         try {
+            const tiempoTranscurrido = Date.now();
+            const tiempo = new Date(tiempoTranscurrido);
+
             const dataToStore = {
                 objectid: objectid,
-                visitado: true
+                visitado: true,
+                visitadoFecha: tiempo.toLocaleString() 
             };
             console.log('dataToStore:', dataToStore);
 
@@ -151,7 +155,7 @@ export const DatosProvider = ({ children }) => {
             const updatedVisitado = combinedData.map(item => {
                 const index = parsedData.findIndex(parsedItem => parsedItem.objectid === item.objectid);
                 if (index !== -1) {
-                    return { ...item, visitado: true };
+                    return { ...item, visitado: true, visitadoFecha: parsedData[index].visitadoFecha };
                 }
                 return item;
             });
