@@ -57,13 +57,6 @@ const Inicio = () => {
         getCurrentLocation();
     };
 
-    // const uniqueFallas = fallas.reduce((acc, current) => {
-    //     if (!acc.find(item => item.nombre === current.nombre)) {
-    //         acc.push(current);
-    //     }
-    //     return acc;
-    // }, []);
-
     const renderFallaDetalle = ({ item }) => (
 
         <View>

@@ -9,8 +9,6 @@ const Camara = () => {
     const [status, requestPermission] = useCameraPermissions();
     const [alerta, setAlerta] = useState(false);
     const [scanned, setScanned] = useState(false);
-    const [flash, setFlash] = useState('off');
-    const [data, setData] = useState('');
     const [modalFallaVisible, setmodalFallaVisible] = useState(false);
     const { fallasCompletas, toggleVisited} = useContext(DatosContext);
     const [fallaDetalle, setfallaDetalle] = useState({});
@@ -44,29 +42,9 @@ const Camara = () => {
             <Text style={styles.detallesFallaTexto}>{item.anyo_fundacion}</Text>
         </View>
     );
-
-    /*
-    const concederPermiso = async () => {
-        setAlerta(false);
-        await getCameraPermissions();
-    };
-
-    if (status !== 'granted') {
-        return (
-            
-            <View style={styles.container}>
-                <Text>No se ha concedido permiso para la cámara.</Text>
-                <TouchableOpacity onPress={concederPermiso}>
-                    <Text>Conceder permiso</Text>
-                </TouchableOpacity>
-            </View>
-           
-        );
-    }
-    */
+    
     const handleBarCodeScanned = (Data) => {
         setScanned(true);
-        setData(Data)
         console.log("Data: " + Data)
         const idFalla = parseInt(Data.data);
         console.log("ID: " + idFalla);
@@ -94,7 +72,6 @@ const Camara = () => {
                     barCodeScannerSettings={{
                         barCodeTypes: ["qr"],
                     }}
-                    flashMode={flash}
                     onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
                 >
                 </CameraView>

@@ -3,10 +3,6 @@ import { TouchableOpacity, StyleSheet, Text, View, TextInput, Image } from 'reac
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useContext, useEffect } from 'react';
 import { DatosContext } from './Datos';
-//import { Divider } from '@rneui/themed';
-//<Divider inset={true} insetType="middle" ></Divider>
-
-
 
 export default function Login({ navigation }) {
   const {myUsername,saveUsername} = useContext(DatosContext);
