@@ -42,8 +42,8 @@ const Lista_Fallas = ({ navigation }) => {
             updatedFallas = fallas_visitadas.filter(falla => falla.tipo === "Infantil");
         } else if (!checkBoxInfantil && checkBoxMayor && checkBoxVisitado) {
             updatedFallas = fallas_visitadas.filter(falla => falla.tipo === "Mayor");
-        } else {
-            updatedFallas = fallas_visitadas;
+        } else if(checkBoxInfantil && checkBoxMayor && !checkBoxVisitado){
+            updatedFallas = falla_completa.filter(falla => !falla.visitado);
         }
 
         if (section != "Todas") {
@@ -150,12 +150,12 @@ const Lista_Fallas = ({ navigation }) => {
     const renderFallaDetalle = ({ item }) => (
         
         <View>
-            <Text style={styles.detallesFallaTexto}>{item.nombre}</Text>
-            <Text style={styles.detallesFallaTexto}>{item.seccion}</Text>
-            <Text style={styles.detallesFallaTexto}>{item.tipo}</Text>
-            <Text style={styles.detallesFallaTexto}>{item.presidente}</Text>
-            <Text style={styles.detallesFallaTexto}>{item.lema}</Text>
-            <Text style={styles.detallesFallaTexto}>{item.anyo_fundacion}</Text>
+            <Text style={styles.detallesFallaTexto}>Nombre: {item.nombre || "No disponible"}</Text>
+            <Text style={styles.detallesFallaTexto}>Sección: {item.seccion || "No disponible"}</Text>
+            <Text style={styles.detallesFallaTexto}>Tipo: {item.tipo || "No disponible"}</Text>
+            <Text style={styles.detallesFallaTexto}>Presidente: {item.presidente || "No disponible"}</Text>
+            <Text style={styles.detallesFallaTexto}>Lema: {item.lema || "No disponible"}</Text>
+            <Text style={styles.detallesFallaTexto}>Año: {item.anyo_fundacion || "No disponible"}</Text>
         </View>
     );
 
