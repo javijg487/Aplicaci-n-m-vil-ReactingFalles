@@ -105,7 +105,7 @@ const Lista_Fallas = ({ navigation }) => {
          }catch(error){
              console.log(error.message);
          }
-     }
+    };
  
 
     if (isLoading) {

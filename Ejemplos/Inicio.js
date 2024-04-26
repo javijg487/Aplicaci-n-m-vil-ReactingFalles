@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Alert, Modal, Image, FlatList } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Alert, Modal, Image, FlatList,Share } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Marker } from 'react-native-maps';
 import MapView from "react-native-map-clustering";
@@ -80,22 +80,42 @@ const Inicio = () => {
             visitado: !detalle.visitado
         }));
     };
-    
+
     const elegirImage = (falla) => {
-    let imageFalla ;
+        let imageFalla;
 
-    if(falla.tipo === "Mayor"&& falla.seccion!="Especial"){
-        imageFalla = require('../assets/fire.png');
-    }else if(falla.tipo === "Infantil"&& falla.seccion!="Inf. Especial"){
-        imageFalla = require('../assets/fire_green.png');
-    }else if(falla.seccion==="Especial"){
-        imageFalla = require('../assets/fire_blue.png');
-    }else if(falla.seccion==="Inf. Especial"){
-        imageFalla = require('../assets/fire_pink.png');
+        if (falla.tipo === "Mayor" && falla.seccion != "Especial") {
+            imageFalla = require('../assets/fire.png');
+        } else if (falla.tipo === "Infantil" && falla.seccion != "Inf. Especial") {
+            imageFalla = require('../assets/fire_green.png');
+        } else if (falla.seccion === "Especial") {
+            imageFalla = require('../assets/fire_blue.png');
+        } else if (falla.seccion === "Inf. Especial") {
+            imageFalla = require('../assets/fire_pink.png');
+        }
+        return imageFalla;
     }
-    return imageFalla;
-    }
-
+    const onShare = async () => {
+        try
+         {
+             const result = await Share.share({
+                 message: ("¿Has visto esta Falla? Te la recomiendo!" + "\n" + "Se llama " + "*"+fallaDetalle.nombre+"*" + "\n" + "Y aquí puede ver su boceto!" + "\n" + fallaDetalle.boceto)
+             });
+ 
+             if (result.action === Share.sharedAction){
+                 if(result.activityType){
+                     console.log("Compartida con tipo: ", result.activityType);
+                 }else{
+                     console.log("Compartido");
+                 }
+             }
+             else if(result.action === Share.dismissedAction){
+                 console.log("No compartido")
+             }
+         }catch(error){
+             console.log(error.message);
+         }
+    };
 
     return (
         <View>
@@ -123,7 +143,7 @@ const Inicio = () => {
                         onPress={() => handlefallaDetalle(falla)}
                         pinColor={falla.tipo === "Mayor" ? 'green' : 'red'}
                     >
-                        <Image source={elegirImage(falla)} style={{height: 40, width:40 }} />
+                        <Image source={elegirImage(falla)} style={{ height: 40, width: 40 }} />
                     </Marker>
                 ))}
             </MapView>
@@ -138,7 +158,7 @@ const Inicio = () => {
                             <Text style={[styles.TextoBotonesDetalle, { marginLeft: -5 }]}>VISITADO</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.botonesDetalles}>
-                            <Ionicons name="share" color={'gray'} size={50} style={styles.iconDetalle} />
+                            <Ionicons name="share" color={'gray'} size={50} style={styles.iconDetalle} onPress={onShare} />
                             <Text style={styles.TextoBotonesDetalle}>COMPARTIR</Text>
                         </TouchableOpacity>
                     </View>
