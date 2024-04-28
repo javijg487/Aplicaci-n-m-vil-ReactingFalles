@@ -48,14 +48,21 @@ const Camara = () => {
         console.log("Data: " + Data)
         const idFalla = parseInt(Data.data);
         console.log("ID: " + idFalla);
-        const fallaEncontrada = falla_completa.find(falla => falla.id_falla === idFalla);
+        const fallaEncontrada = falla_completa.find(falla => falla.objectid === idFalla);
         if (fallaEncontrada) {
             console.log("Falla encontrada: " + fallaEncontrada.nombre);
             setmodalFallaVisible(!modalFallaVisible);
             setfallaDetalle(fallaEncontrada);
-        }else(
-            console.log("Falla no encontrada")
-        )
+            
+        }else{
+            console.log("Falla no encontrada");
+            Alert.alert(
+                "Falla no encontrada",
+                "No se ha encontrado ninguna falla con el QR escaneado.",
+                [{ text: "OK", onPress: () => setScanned(false) }]
+            );
+        }
+        
     };
     const toggleVisitedDetalle = (detalle) => {
         setfallaDetalle(prevFallaDetalle => ({
@@ -95,8 +102,9 @@ const Camara = () => {
                     }}
                     onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
                 >
+                    
                 </CameraView>
-
+                
             </View>
 
 

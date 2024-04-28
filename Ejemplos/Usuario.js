@@ -49,8 +49,8 @@ const Usuario = ({ navigation }) => {
       
       <TouchableOpacity onPress={() => cerrarSesion()} >
         <View style={styles.containerList}>
-          <Ionicons style={styles.iconPosicion} name="log-out-outline" color={"#FF8C00"} size={50} />
-          <Text style={styles.title2}>Cerrar Sesión</Text>
+          <Ionicons style={styles.iconPosicion} name="close-circle" color={"#FF8C00"} size={50} />
+          <Text style={styles.title2}>Eliminar Cuenta</Text>
         </View>
       </TouchableOpacity>
 
