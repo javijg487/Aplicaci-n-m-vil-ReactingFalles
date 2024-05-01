@@ -20,7 +20,6 @@ const Lista_Fallas = ({ navigation }) => {
     const [modalFallaVisible, setmodalFallaVisible] = useState(false);
     const [section, setSection] = useState('Todas');
     const [sortedData, setSortedData] = useState([]);
-    const [page, setPage] = useState(1);
     const [order, setOrder] = useState("Cercanía"); // false para distancia distance, true para revertir distancia distance
     const [fallaDetalle, setfallaDetalle] = useState({});
     const falla_completa = fallasCompletas();
@@ -81,9 +80,6 @@ const Lista_Fallas = ({ navigation }) => {
         updateFallas();
     }, [checkBoxInfantil, checkBoxMayor, checkBoxVisitado, searchTerm, order, toggleVisited, section]);
 
-    const loadMoreData = async () => {
-        setPage(page + 1);
-    };
 
     const onShare = async () => {
         try
@@ -314,10 +310,6 @@ const Lista_Fallas = ({ navigation }) => {
                     data={sortedData}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.objectid.toString()}
-                    onEndReached={loadMoreData} // Detectar cuando el usuario llega al final de la lista
-                    onEndReachedThreshold={0.1} // Porcentaje de la longitud de la lista en el que se llama a onEndReached
-                    ListFooterComponent={isLoading && <ActivityIndicator
-                    />} // Indicador de carga al final de la lista
                 />
             </View>
 
